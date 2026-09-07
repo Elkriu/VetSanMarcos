@@ -1,0 +1,61 @@
+/* ================= VARIABLES Y CONFIGURACIÓN GLOBAL ================= */
+:root {
+    --color-fondo: #f4f6f8;         
+    --color-texto: #2c3e50;         
+    --color-tarjetas: #ffffff;      
+
+   
+    --bs-primary: #7c3aed !important;
+    --bs-primary-rgb: 124, 58, 237 !important;
+}
+
+/* ================= ESTILOS GLOBALES ================= */
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ================= NAVBAR (GRIS SUAVE) ================= */
+.navbar {
+    background-color: #e9ecef !important; 
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.navbar .nav-link {
+    color: var(--color-texto);
+    transition: color 0.2s ease;
+}
+
+/* Enlaces del menu al pasar el mouse o estar activos*/
+.navbar .nav-link:hover, 
+.navbar .nav-link.active {
+    color: #7c3aed !important; 
+}
+
+/* ================= COMPONENTES GENERALES ================= */
+/* Se hace que haya morao obligatorio*/
+.btn-primary {
+    background-color: #7c3aed !important;
+    border-color: #7c3aed !important;
+}
+
+.btn-primary:hover {
+    background-color: #6d28d9 !important; 
+    border-color: #6d28d9 !important;
+}
+
+.text-primary {
+    color: #7c3aed !important;
+}
+
+.bg-primary {
+    background-color: #7c3aed !important;
+}
+
+/* ================= TARJETAS Y CONTENEDORES ================= */
+.card, .rounded-4 {
+    background-color: var(--color-tarjetas);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
