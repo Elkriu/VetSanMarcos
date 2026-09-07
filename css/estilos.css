@@ -59,3 +59,17 @@ body {
     background-color: var(--color-tarjetas);
     border: 1px solid rgba(0, 0, 0, 0.06);
 }
+
+html {
+    overflow-y: scroll; 
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ocupa al menos toda la altura de la pantalla */
+}
+
+main {
+    flex: 1; /* Hace que el contenido principal crezca y empuje el footer hacia abajo */
+}
