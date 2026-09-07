@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso - Veterinaria San Marcos</title>
+
+    <!-- Link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- Tu CSS externo personalizado -->
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- ================= HEADER ================= -->
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary" href="inicio.html">
+                    🐾 Veterinaria San Marcos
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-lg-center gap-2">
+                        <li class="nav-item"><a class="nav-link" href="inicio.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                        <li class="nav-item"><a class="nav-link" href="registro.html">Registro</a></li>
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-primary btn-sm px-3 active" href="login.html">Iniciar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ================= MAIN ================= -->
+    <main class="flex-grow-1 d-flex align-items-center py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    
+                    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5">
+                        
+                        <!-- SECCIÓN LOGIN -->
+                        <div id="seccion-login">
+                            <div class="text-center mb-4">
+                                <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-2 fw-semibold">
+                                    🔐 Bienvenido de nuevo
+                                </span>
+                                <h2 class="fw-bold text-dark">Iniciar Sesión</h2>
+                                <p class="text-muted small">Ingresa a tu cuenta para gestionar tus citas.</p>
+                            </div>
+
+                            <form id="form-login" novalidate>
+                                <div class="mb-3">
+                                    <label for="login-email" class="form-label fw-semibold small">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="login-email" placeholder="tucorreo@ejemplo.com">
+                                    <div class="invalid-feedback" id="error-login-email"></div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="login-password" class="form-label fw-semibold small">Contraseña</label>
+                                    <input type="password" class="form-control" id="login-password" placeholder="••••••••">
+                                    <div class="invalid-feedback" id="error-login-password"></div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">Ingresar</button>
+                            </form>
+
+                            <div class="text-center mt-4">
+                                <p class="text-muted small mb-0">
+                                    ¿No tienes cuenta? 
+                                    <a href="#" id="ir-a-registro" class="text-primary fw-semibold text-decoration-none">Regístrate aquí</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- SECCION REGISTRO -->
+                        <div id="seccion-registro" style="display: none;">
+                            <div class="text-center mb-4">
+                                <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-2 fw-semibold">
+                                    🐾 Únete a nosotros
+                                </span>
+                                <h2 class="fw-bold text-dark">Crear Cuenta</h2>
+                                <p class="text-muted small">Regístrate para agilizar la atención de tus mascotas.</p>
+                            </div>
+
+                            <form id="form-registro" novalidate>
+                                <div class="mb-3">
+                                    <label for="reg-run" class="form-label fw-semibold small">RUN (sin puntos ni guion)</label>
+                                    <input type="text" class="form-control" id="reg-run" placeholder="123456789">
+                                    <div class="invalid-feedback" id="error-reg-run"></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label for="reg-nombre" class="form-label fw-semibold small">Nombre</label>
+                                        <input type="text" class="form-control" id="reg-nombre" placeholder="Tu nombre">
+                                        <div class="invalid-feedback" id="error-reg-nombre"></div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label for="reg-apellido" class="form-label fw-semibold small">Apellidos</label>
+                                        <input type="text" class="form-control" id="reg-apellido" placeholder="Tus apellidos">
+                                        <div class="invalid-feedback" id="error-reg-apellido"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="reg-email" class="form-label fw-semibold small">Correo electrónico</label>
+                                    <input type="email" class="form-control" id="reg-email" placeholder="tucorreo@ejemplo.com">
+                                    <div class="invalid-feedback" id="error-reg-email"></div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="reg-password" class="form-label fw-semibold small">Contraseña (4 a 10 caracteres)</label>
+                                    <input type="password" class="form-control" id="reg-password" placeholder="••••••••">
+                                    <div class="invalid-feedback" id="error-reg-password"></div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">Registrarse</button>
+                            </form>
+
+                            <div class="text-center mt-4">
+                                <p class="text-muted small mb-0">
+                                    ¿Ya tienes cuenta? 
+                                    <a href="#" id="ir-a-login" class="text-primary fw-semibold text-decoration-none">Inicia sesión aquí</a>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-white border-top py-4 text-center text-muted small">
+        <div class="container">
+            <p class="mb-0">©2026 Veterinaria San Marcos - Rancagua. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="js/validaciones.js"></script>
+</body>
+</html>
