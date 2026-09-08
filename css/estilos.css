@@ -73,3 +73,8 @@ body {
 main {
     flex: 1; /* Hace que el contenido principal crezca y empuje el footer hacia abajo */
 }
+
+#info-usuario-admin {
+    color: #a855f7 !important;
+    font-weight: 600;
+}

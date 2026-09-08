@@ -4,63 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacto y Agenda - Veterinaria San Marcos</title>
-
-    <!-- Link Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- Tu CSS externo personalizado -->
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-
-    <!-- ================= HEADER Y BARRA DE NAVEGACIÓN ================= -->
     <header>
         <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container">
-                <a class="navbar-brand fw-bold text-primary" href="inicio.html">
-                    🐾 Veterinaria San Marcos
-                </a>
+                <a class="navbar-brand fw-bold text-primary" href="inicio.html">🐾 Veterinaria San Marcos</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-lg-center gap-2">
                         <li class="nav-item"><a class="nav-link" href="inicio.html">Inicio</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicios.html">Servicios</a>
-                        </li>                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="nosotros.html">Nosotros</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
                         <li class="nav-item"><a class="nav-link active fw-semibold" href="contacto.html">Contacto</a></li>
-                        <li class="nav-item ms-lg-2"><a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a></li>
+                        <li class="nav-item ms-lg-2" id="nav-auth-container">
+                            <a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-    <!-- ================= CONTENIDO PRINCIPAL ================= -->
     <main class="py-5">
         <div class="container">
-            
             <div class="row text-center mb-5">
                 <div class="col-12">
-                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">
-                        Atención en Línea
-                    </span>
+                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">Atención en Línea</span>
                     <h1 class="display-5 fw-bold text-dark">Contacto y <span class="text-primary">Agenda de Citas</span></h1>
                     <p class="text-muted">Revisa nuestra disponibilidad horaria y agenda tu hora médica en Rancagua.</p>
                 </div>
             </div>
 
-            <!-- Fila principal: Izquierda Datos/Mapa - Derecha Sistema de Agenda -->
             <div class="row g-5 align-items-stretch mb-5">
-                
-                <!-- Columna Izquierda: Información de contacto -->
                 <div class="col-lg-5">
                     <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
                         <h3 class="fw-bold h4 text-dark mb-4">Información y Ubicación</h3>
-                        
                         <div class="d-flex align-items-start gap-3 mb-4">
                             <div class="fs-4">📍</div>
                             <div>
@@ -68,7 +51,6 @@
                                 <p class="text-muted small mb-0">Av. Libertador Bernardo O'Higgins #450, Rancagua</p>
                             </div>
                         </div>
-
                         <div class="d-flex align-items-start gap-3 mb-4">
                             <div class="fs-4">📞</div>
                             <div>
@@ -76,7 +58,6 @@
                                 <p class="text-muted small mb-0">+56 9 1234 5678</p>
                             </div>
                         </div>
-
                         <div class="d-flex align-items-start gap-3 mb-4">
                             <div class="fs-4">⏰</div>
                             <div>
@@ -84,22 +65,15 @@
                                 <p class="text-muted small mb-0">Lun - Vie: 09:00 - 19:00 hrs.<br>Sáb: 10:00 - 14:00 hrs.</p>
                             </div>
                         </div>
-
-                        <!-- Mapa pequeño integrado -->
                         <div class="mt-auto rounded-3 overflow-hidden shadow-sm" style="height: 180px;">
-                            <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.3582451259926!2d-70.74313!3d-34.17012!2m3!1f0!2f0!3f0!3m2!1f1024!2f768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDEwJzEyLjQiUyA3MMKwNDQnMzUuMyJX!5e0!3m2!1ses!2scl!4v1650000000000!5m2!1ses!2scl" 
-                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
-                            </iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3329.3582451259926!2d-70.74313!3d-34.17012!2m3!1f0!2f0!3f0!3m2!1f1024!2f768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDEwJzEyLjQiUyA3MMKwNDQnMzUuMyJX!5e0!3m2!1ses!2scl!4v1650000000000!5m2!1ses!2scl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Módulo de Agendamiento Interactivo -->
                 <div class="col-lg-7">
                     <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100">
                         <h3 class="fw-bold h4 text-dark mb-4">📅 Consultar Disponibilidad y Agendar</h3>
-                        
                         <form id="form-agenda">
                             <div class="mb-3">
                                 <label for="servicio-cita" class="form-label fw-semibold small">Seleccione el Servicio</label>
@@ -112,12 +86,10 @@
                                     <option value="Control de Peso">Control de Peso</option>
                                 </select>
                             </div>
-
                             <div class="mb-3">
                                 <label for="fecha-cita" class="form-label fw-semibold small">Fecha de la Cita</label>
-                                <input type="date" class="form-control" id="fecha-cita" min="2026-09-07" required>
+                                <input type="date" class="form-control" id="fecha-cita" required>
                             </div>
-
                             <div class="mb-4">
                                 <label for="hora-cita" class="form-label fw-semibold small">Horarios Disponibles</label>
                                 <select class="form-select" id="hora-cita" required>
@@ -128,32 +100,21 @@
                                     <option value="17:15">17:15 hrs. (Disponible)</option>
                                 </select>
                             </div>
-
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm">Reservar Hora Ahora</button>
                         </form>
-
-                        <!-- Mensaje de éxito oculto por defecto para cuando reserven -->
-                        <div id="alerta-exito" class="alert alert-success mt-3 d-none" role="alert">
-                            ¡Cita reservada con éxito! Te hemos enviado un comprobante.
-                        </div>
+                        <div id="alerta-exito" class="alert alert-success mt-3 d-none" role="alert"></div>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <!-- ================= PIE DE PÁGINA ================= -->
     <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
-        <div class="container">
-            <p class="mb-0">©2009-2026 Veterinaria San Marcos Todos los derechos reservados.</p>
-        </div>
+        <div class="container"><p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p></div>
     </footer>
 
-<!-- Script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    
-    <!-- Tu nuevo script de agenda -->
     <script src="js/agenda.js"></script>
+    <script src="js/auth-nav.js"></script>
 </body>
 </html>

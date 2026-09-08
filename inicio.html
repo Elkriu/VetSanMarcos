@@ -4,45 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Veterinaria San Marcos</title>
-
-    <!-- Link Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <!-- Tu CSS externo personalizado -->
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-
-    <!-- ================= HEADER Y BARRA DE NAVEGACIÓN ================= -->
     <header>
         <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container">
-                <!-- nombre de la marca -->
-                <a class="navbar-brand fw-bold text-primary" href="inicio.html">
-                    🐾 Veterinaria San Marcos
-                </a>
-
-                <!-- Boton hamburguesa para celulares -->
+                <a class="navbar-brand fw-bold text-primary" href="inicio.html">🐾 Veterinaria San Marcos</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <!-- Menu de navegacion -->
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-lg-center gap-2">
-                        <li class="nav-item">
-                            <a class="nav-link active fw-semibold" href="inicio.html">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicios.html">Servicios</a>
-                        </li>                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="nosotros.html">Nosotros</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contacto.html">Contacto</a>
-                        </li>
-                        <!-- Botón de Iniciar Sesion-->
-                        <li class="nav-item ms-lg-2">
+                        <li class="nav-item"><a class="nav-link active fw-semibold" href="inicio.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                        <li class="nav-item ms-lg-2" id="nav-auth-container">
                             <a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a>
                         </li>
                     </ul>
@@ -51,76 +30,41 @@
         </nav>
     </header>
 
-    <!-- ================= CONTENIDO PRINCIPAL (MAIN)================= -->
     <main class="py-5">
         <div class="container">
             <div class="row align-items-center g-5">
-                
-                <!-- Columna Izquierda: Textos, llamadas a la acción y estadísticas -->
                 <div class="col-lg-6">
-                    <!-- Insignia superior -->
-                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">
-                        🐾 Clínica Veterinaria en Rancagua
-                    </span>
-
-                    <!--Titulo principal con la palabra clave resaltada en morado-->
-                    <h1 class="display-4 fw-bold text-dark lh-sm mb-3">
-                        Para los que entendemos que <span class="text-primary">son familia</span>.
-                    </h1>
-
-                    <p class="text-muted lead mb-4">
-                        Veterinaria San Marcos: Cuidando de tus fieles compañeros con vocación y experiencia desde 2009. Deja atrás las fichas de papel y agenda en línea de forma rápida y segura.
-                    </p>
-
-                    <!--Botones principales-->
+                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">🐾 Clínica Veterinaria en Rancagua</span>
+                    <h1 class="display-4 fw-bold text-dark lh-sm mb-3">Para los que entendemos que <span class="text-primary">son familia</span>.</h1>
+                    <p class="text-muted lead mb-4">Veterinaria San Marcos: Cuidando de tus fieles compañeros con vocación y experiencia desde 2009. Deja atrás las fichas de papel y agenda en línea de forma rápida y segura.</p>
                     <div class="d-flex flex-wrap gap-3 mb-5">
                         <a href="servicios.html" class="btn btn-primary btn-lg px-4 shadow-sm">Ver Servicios</a>
                         <a href="contacto.html" class="btn btn-outline-secondary btn-lg px-4">Agendar Cita</a>
                     </div>
-
-                    <!--Estadisticas rapidas-->
                     <div class="row text-start border-top pt-4">
-                        <div class="col-4">
-                            <h4 class="fw-bold mb-0 text-dark">2009</h4>
-                            <small class="text-muted">Fundación</small>
-                        </div>
-                        <div class="col-4">
-                            <h4 class="fw-bold mb-0 text-dark">4.9 ⭐</h4>
-                            <small class="text-muted">Confianza</small>
-                        </div>
-                        <div class="col-4">
-                            <h4 class="fw-bold mb-0 text-dark">+25</h4>
-                            <small class="text-muted">Pacientes diarios</small>
-                        </div>
+                        <div class="col-4"><h4 class="fw-bold mb-0 text-dark">2009</h4><small class="text-muted">Fundación</small></div>
+                        <div class="col-4"><h4 class="fw-bold mb-0 text-dark">4.9 ⭐</h4><small class="text-muted">Confianza</small></div>
+                        <div class="col-4"><h4 class="fw-bold mb-0 text-dark">+25</h4><small class="text-muted">Pacientes diarios</small></div>
                     </div>
                 </div>
-
-                <!-- Columna Derecha: Imagen destacada con etiqueta flotante -->
                 <div class="col-lg-6 text-center">
                     <div class="position-relative d-inline-block w-100" style="max-width: 480px;">
-                        <!-- Imagen con bordes redondeados-->
                         <img src="img/perro-gato-vet.png" alt="Veterinaria San Marcos" class="img-fluid rounded-4 shadow-lg w-100" style="height: 420px; object-fit: cover;">
-                        
-                        <!--Etiqueta flotante-->
                         <div class="position-absolute bottom-0 start-0 translate-middle-y bg-white p-2 px-3 rounded-pill shadow-sm ms-3 mb-3 d-flex align-items-center gap-2 border">
                             <span class="badge rounded-circle bg-primary p-2"></span>
                             <span class="small fw-semibold text-dark">Atendidos con amor y profesionalismo</span>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <!-- ================= PIE DE PÁGINA (FOOTER) ================= -->
     <footer class="bg-white border-top py-4 text-center text-muted small">
-        <div class="container">
-            <p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p>
-        </div>
+        <div class="container"><p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p></div>
     </footer>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="js/auth-nav.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    //USUARIOS PRECARGADOS CON LOCALSTORAGE
+    // USUARIOS PRECARGADOS CON LOCALSTORAGE
     if (!localStorage.getItem('usuarios_sistema')) {
         const usuariosIniciales = [
             { email: 'admin@sanmarcos.cl', password: 'Admin1!', rol: 'Administrador', nombre: 'Carlos Admin' },
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('usuarios_sistema', JSON.stringify(usuariosIniciales));
     }
 
-    //INTERRUPTOR DE LOGIN <--> REGISTER
+    // INTERRUPTOR DE LOGIN <--> REGISTER
     const seccionLogin = document.getElementById('seccion-login');
     const seccionRegistro = document.getElementById('seccion-registro');
     const irARegistro = document.getElementById('ir-a-registro');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const regexCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|duoc|support|sanmarcos)\.(com|cl|net|org)$/;
     const regexPasswordSegura = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
 
-   //VALIDACIONES Y VERIFICACION DE LOGIN
+    // VALIDACIONES Y VERIFICACION DE LOGIN
     const formLogin = document.getElementById('form-login');
     if (formLogin) {
         formLogin.addEventListener('submit', function(e) {
@@ -61,10 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (isValid) {
-                // Recuperar los usuarios del localStorage
                 let listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
-                
-                // Buscar si el usuario ingresado existe y la contraseña coincide
                 let usuarioEncontrado = listaUsuarios.find(u => u.email === email && u.password === password);
 
                 if (usuarioEncontrado) {
@@ -73,8 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Guardar sesion actual activa
                     localStorage.setItem('sesion_activa', JSON.stringify(usuarioEncontrado));
                     
-                    // Redirigir segun el rol (si es admin, podria ir a una vista de admin, o al inicio por ahora)
-                    window.location.href = 'inicio.html';
+                    // Redirigir según el rol del usuario
+                    if (usuarioEncontrado.rol === 'Administrador' || usuarioEncontrado.rol === 'Recepcionista') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'inicio.html';
+                    }
                 } else {
                     alert('Error: Correo o contraseña incorrectos, o el usuario no está registrado.');
                 }
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    //REGISTRO Y GUARDADO EN LOCALSTORAGE
+    // REGISTRO Y GUARDADO EN LOCALSTORAGE
     const formRegistro = document.getElementById('form-registro');
     if (formRegistro) {
         formRegistro.addEventListener('submit', function(e) {
@@ -138,10 +139,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (isValid) {
-                // Obtener lista actual, agregar el nuevo usuario registrado como "CLIENTE"
                 let listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
                 
-                // Verificar si el correo ya existe
                 let existe = listaUsuarios.some(u => u.email === email);
                 if (existe) {
                     alert('Este correo ya está registrado en el sistema.');

@@ -4,43 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosotros - Veterinaria San Marcos</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-
-    <!-- ================= HEADER Y BARRA DE NAVEGACIÓN ================= -->
     <header>
         <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container">
-                <!-- nombre de la marca -->
-                <a class="navbar-brand fw-bold text-primary" href="inicio.html">
-                    🐾 Veterinaria San Marcos
-                </a>
-                <!-- Boton hamburguesa para celulares -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand fw-bold text-primary" href="inicio.html">🐾 Veterinaria San Marcos</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <!-- Menu de navegacion -->
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-lg-center gap-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="inicio.html">Inicio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="servicios.html">Servicios</a>
-                        </li>                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="nosotros.html">Nosotros</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="contacto.html">Contacto</a>
-                        </li>
-                        <!-- Botón de Iniciar Sesion-->
-                        <li class="nav-item ms-lg-2">
+                        <li class="nav-item"><a class="nav-link" href="inicio.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link active fw-semibold" href="nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                        <li class="nav-item ms-lg-2" id="nav-auth-container">
                             <a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a>
                         </li>
                     </ul>
@@ -49,42 +30,25 @@
         </nav>
     </header>
 
-    <!-- ================= CONTENIDO PRINCIPAL: NOSOTROS ================= -->
     <main class="py-5">
         <div class="container">
-            
-            <!-- SECCIÓN 1: QUIÉNES SOMOS -->
             <div class="row align-items-center g-5 mb-5">
                 <div class="col-lg-6">
-                    <img src="img/gato-vet.webp" alt="Instalaciones Veterinaria San Marcos" 
-                    class="img-fluid rounded-4 shadow-lg w-100" style="height: 380px; object-fit: cover;">
+                    <img src="img/gato-vet.webp" alt="Instalaciones Veterinaria San Marcos" class="img-fluid rounded-4 shadow-lg w-100" style="height: 380px; object-fit: cover;">
                 </div>
                 <div class="col-lg-6">
-                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">
-                        Nuestra Historia
-                    </span>
-                    <h1 class="display-5 fw-bold text-dark lh-sm mb-3">
-                        Más de una década entregando <span class="text-primary">cuidado y bienestar</span>.
-                    </h1>
-                    <p class="text-muted mb-4">
-                        Fundada en 2009, la <strong>Veterinaria San Marcos</strong> nació con la misión de transformar la atención médica animal.
-                         Nos hemos consolidado como un centro clínico de confianza, integrando tecnología de vanguardia,
-                          un equipo humano apasionado y un fuerte compromiso con las familias y sus mascotas.
-                    </p>
-                    <p class="text-muted">
-                        Creemos firmemente que cada mascota merece una atención digna, empática y de alta calidad técnica, 
-                        desde sus primeros meses de vida hasta su etapa dorada.
-                    </p>
+                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">Nuestra Historia</span>
+                    <h1 class="display-5 fw-bold text-dark lh-sm mb-3">Más de una década entregando <span class="text-primary">cuidado y bienestar</span>.</h1>
+                    <p class="text-muted mb-4">Fundada en 2009, la <strong>Veterinaria San Marcos</strong> nació con la misión de transformar la atención médica animal. Nos hemos consolidado como un centro clínico de confianza, integrando tecnología de vanguardia, un equipo humano apasionado y un fuerte compromiso con las familias y sus mascotas.</p>
+                    <p class="text-muted">Creemos firmemente que cada mascota merece una atención digna, empática y de alta calidad técnica, desde sus primeros meses de vida hasta su etapa dorada.</p>
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: NUESTROS VALORES (Tarjetas) -->
             <div class="row text-center mb-5 pt-4">
                 <div class="col-12 mb-4">
                     <h2 class="fw-bold text-dark">Lo que nos define</h2>
                     <p class="text-muted">Pilares fundamentales en cada consulta y tratamiento</p>
                 </div>
-                
                 <div class="col-md-4 mb-3">
                     <div class="card h-100 p-4 border-0 shadow-sm rounded-4">
                         <div class="card-body">
@@ -94,7 +58,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <div class="card h-100 p-4 border-0 shadow-sm rounded-4">
                         <div class="card-body">
@@ -104,7 +67,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-4 mb-3">
                     <div class="card h-100 p-4 border-0 shadow-sm rounded-4">
                         <div class="card-body">
@@ -116,19 +78,14 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 3: EQUIPO MÉDICO -->
             <div class="row text-center pt-3">
                 <div class="col-12 mb-4">
                     <h2 class="fw-bold text-dark">Nuestro Equipo Médico</h2>
                     <p class="text-muted">Especialistas dedicados al cuidado de tus compañeros</p>
                 </div>
-
-                <!-- Miembro 1 -->
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="bg-light py-4">
-                            <span class="display-4">👩‍⚕️</span>
-                        </div>
+                        <div class="bg-light py-4"><span class="display-4">👩‍⚕️</span></div>
                         <div class="card-body">
                             <h5 class="fw-bold text-dark mb-1">Dra. Valentina San Martín</h5>
                             <p class="text-primary small fw-semibold mb-2">Directora Médica & Cirujana</p>
@@ -136,13 +93,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Miembro 2 -->
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="bg-light py-4">
-                            <span class="display-4">👨‍⚕️</span>
-                        </div>
+                        <div class="bg-light py-4"><span class="display-4">👨‍⚕️</span></div>
                         <div class="card-body">
                             <h5 class="fw-bold text-dark mb-1">Dr. Carlos Mendoza</h5>
                             <p class="text-primary small fw-semibold mb-2">Médico Veterinario de Urgencias</p>
@@ -150,13 +103,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Miembro 3 -->
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                        <div class="bg-light py-4">
-                            <span class="display-4">👩‍💻</span>
-                        </div>
+                        <div class="bg-light py-4"><span class="display-4">👩‍💻</span></div>
                         <div class="card-body">
                             <h5 class="fw-bold text-dark mb-1">Camila Riquelme</h5>
                             <p class="text-primary small fw-semibold mb-2">Asistente y Recepción</p>
@@ -164,20 +113,15 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </main>
 
-    <!-- ================= PIE DE PÁGINA (FOOTER) ================= -->
     <footer class="bg-white border-top py-4 text-center text-muted small">
-        <div class="container">
-            <p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p>
-        </div>
+        <div class="container"><p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p></div>
     </footer>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="js/auth-nav.js"></script>
 </body>
 </html>

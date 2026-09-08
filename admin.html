@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Veterinaria San Marcos</title>
+
+    <!-- Link Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="bg-light">
+
+<!-- ================= NAVBAR ADMIN ================= -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-warning" href="admin.html">
+                    ⚙️ Admin - Veterinaria San Marcos
+                </a>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-lg-center gap-3">
+                        <li class="nav-item text-white small" id="info-usuario-admin">
+                            <!-- Se llena dinámicamente con JS -->
+                        </li>
+                        <!-- Botón para volver al sitio público -->
+                        <li class="nav-item">
+                            <a style="color: black;" href="inicio.html" class="btn btn-outline-light btn-sm px-3">🌐 Ver Sitio Público</a>
+                        </li>
+                        <li class="nav-item">
+                            <button id="btn-cerrar-sesion" class="btn btn-danger btn-sm px-3">Cerrar Sesión</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ================= CONTENIDO PRINCIPAL: PANEL ================= -->
+    <main class="py-5">
+        <div class="container">
+            
+            <!-- Encabezado del Panel -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                        <h1 class="h3 fw-bold text-dark mb-1">Panel de Control y Gestión</h1>
+                        <p class="text-muted small mb-0">Bienvenido al sistema administrativo central de la clínica. Aquí puedes gestionar usuarios y prestaciones.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Pestañas o Secciones de Gestión -->
+            <div class="row g-4">
+                
+                <!-- Mantenedor de Usuarios (Requisito pauta) -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 fw-bold text-dark mb-0">👥 Mantenedor de Usuarios</h3>
+                            <span class="badge bg-primary">Gestión de Roles</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo electrónico</th>
+                                        <th>Rol asignado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-usuarios-body">
+                                    <!-- Creado por JavaScript desde localStorage -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen de Citas Agendadas -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 fw-bold text-dark mb-0">📅 Citas Médicas Registradas en Línea</h3>
+                            <span class="badge bg-success">Sistema en vivo</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Servicio</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-citas-body">
+                                    <!-- Creado por JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container">
+            <p class="mb-0">©2009-2026 Veterinaria San Marcos - Módulo Administrativo Seguro.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts de Bootstrap y lógica de seguridad admin -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Validar si hay una sesión activa y si es Administrador o Recepcionista
+            const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
+
+            if (!sesionActiva) {
+                alert("Acceso denegado. Debe iniciar sesión para ingresar al panel.");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Mostrar bienvenida con rol en el navbar
+            document.getElementById('info-usuario-admin').innerHTML = `👤 <b>${sesionActiva.nombre}</b> <span class="badge bg-warning text-dark">${sesionActiva.rol}</span>`;
+
+            // 2. Botón de cerrar sesión
+            document.getElementById('btn-cerrar-sesion').addEventListener('click', function() {
+                localStorage.removeItem('sesion_activa');
+                window.location.href = 'login.html';
+            });
+
+            // 3. Cargar la lista de usuarios desde localStorage (mantenedor de usuarios)
+            const tablaUsuariosBody = document.getElementById('tabla-usuarios-body');
+            const listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
+            
+            tablaUsuariosBody.innerHTML = '';
+            listaUsuarios.forEach((usr, index) => {
+                let fila = `<tr>
+                    <td>${usr.nombre || 'Usuario sin nombre'}</td>
+                    <td>${usr.email}</td>
+                    <td><span class="badge bg-secondary">${usr.rol}</span></td>
+                    <td>
+                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarUsuario(${index})">Eliminar</button>
+                    </td>
+                </tr>`;
+                tablaUsuariosBody.innerHTML += fila;
+            });
+
+            // 4. Cargar la lista de citas agendadas desde localStorage
+            const tablaCitasBody = document.getElementById('tabla-citas-body');
+            const listaCitas = JSON.parse(localStorage.getItem('citas_vet')) || [];
+            
+            tablaCitasBody.innerHTML = '';
+            if (listaCitas.length === 0) {
+                tablaCitasBody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">No hay citas agendadas actualmente.</td></tr>`;
+            } else {
+                listaCitas.forEach(cita => {
+                    let filaCita = `<tr>
+                        <td><span class="fw-semibold text-primary">${cita.servicio}</span></td>
+                        <td>${cita.fecha}</td>
+                        <td>${cita.hora}</td>
+                    </tr>`;
+                    tablaCitasBody.innerHTML += filaCita;
+                });
+            }
+        });
+
+        // Función global para eliminar usuario de prueba en el mantenedor
+        function eliminarUsuario(index) {
+            let listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
+            if (confirm(`¿Estás seguro de eliminar al usuario ${listaUsuarios[index].email}?`)) {
+                listaUsuarios.splice(index, 1);
+                localStorage.setItem('usuarios_sistema', JSON.stringify(listaUsuarios));
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
