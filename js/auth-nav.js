@@ -3,8 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const authContainer = document.getElementById('nav-auth-container');
 
     if (authContainer && sesionActiva) {
-        let destinoPanel = (sesionActiva.rol === 'Administrador' || sesionActiva.rol === 'Recepcionista') ? 'admin.html' : 'contacto.html';
-        let textoBotonPanel = (sesionActiva.rol === 'Administrador' || sesionActiva.rol === 'Recepcionista') ? 'Panel Admin' : 'Mis Citas';
+        let destinoPanel = 'inicio.html';
+        let textoBotonPanel = 'Mis Citas';
+
+        // Validar el destino exacto según el rol del usuario activo
+        if (sesionActiva.rol === 'Administrador') {
+            destinoPanel = 'admin.html';
+            textoBotonPanel = 'Panel Admin';
+        } else if (sesionActiva.rol === 'Recepcionista') {
+            destinoPanel = 'recepcion.html'; 
+            textoBotonPanel = 'Panel Recepción';
+        }
 
         authContainer.innerHTML = `
             <div class="d-flex align-items-center gap-2 flex-wrap">

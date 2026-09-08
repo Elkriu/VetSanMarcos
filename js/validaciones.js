@@ -46,7 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             alert(`¡Bienvenido, ${user.nombre}! Redirigiendo...`);
             localStorage.setItem('sesion_activa', JSON.stringify(user));
-            window.location.href = (user.rol === 'Administrador' || user.rol === 'Recepcionista') ? 'admin.html' : 'inicio.html';
+            
+            // Redirección por roles diferenciada (Admin, Recepcionista, Cliente)
+            if (user.rol === 'Administrador') {
+                window.location.href = 'admin.html';
+            } else if (user.rol === 'Recepcionista') {
+                window.location.href = 'recepcion.html'
+            } else {
+                window.location.href = 'inicio.html';
+            }
         } else {
             emailInput.classList.add('is-invalid');
             passInput.classList.add('is-invalid');
