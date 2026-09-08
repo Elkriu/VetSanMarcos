@@ -12,7 +12,7 @@
 </head>
 <body class="bg-light">
 
-<!-- ================= NAVBAR ADMIN ================= -->
+    <!-- ================= NAVBAR ADMIN ================= -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
@@ -24,9 +24,8 @@
                         <li class="nav-item text-white small" id="info-usuario-admin">
                             <!-- Se llena dinámicamente con JS -->
                         </li>
-                        <!-- Botón para volver al sitio público -->
                         <li class="nav-item">
-                            <a style="color: black;" href="inicio.html" class="btn btn-outline-light btn-sm px-3">🌐 Ver Sitio Público</a>
+                            <a href="inicio.html" class="btn btn-outline-light btn-sm px-3 text-dark bg-white">🌐 Ver Sitio Público</a>
                         </li>
                         <li class="nav-item">
                             <button id="btn-cerrar-sesion" class="btn btn-danger btn-sm px-3">Cerrar Sesión</button>
@@ -46,21 +45,22 @@
                 <div class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
                         <h1 class="h3 fw-bold text-dark mb-1">Panel de Control y Gestión</h1>
-                        <p class="text-muted small mb-0">Bienvenido al sistema administrativo central de la clínica. Aquí puedes gestionar usuarios y prestaciones.</p>
+                        <p class="text-muted small mb-0">Gestión centralizada de usuarios, roles y supervisiones de la clínica.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Sección de Pestañas o Secciones de Gestión -->
-            <div class="row g-4">
-                
-                <!-- Mantenedor de Usuarios (Requisito pauta) -->
+            <!-- ================= MANTENEDOR DE USUARIOS ================= -->
+            <div class="row g-4 mb-5">
                 <div class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                             <h3 class="h5 fw-bold text-dark mb-0">👥 Mantenedor de Usuarios</h3>
-                            <span class="badge bg-primary">Gestión de Roles</span>
+                            <button class="btn btn-primary btn-sm px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#modalUsuario" onclick="prepararCreacion()">
+                                + Nuevo Usuario
+                            </button>
                         </div>
+                        
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
@@ -68,11 +68,12 @@
                                         <th>Nombre</th>
                                         <th>Correo electrónico</th>
                                         <th>Rol asignado</th>
-                                        <th>Acciones</th>
+                                        <th>Estado</th>
+                                        <th class="text-end">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-usuarios-body">
-                                    <!-- Creado por JavaScript desde localStorage -->
+                                    <!-- Cargado por JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -96,16 +97,58 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-citas-body">
-                                    <!-- Creado por JavaScript -->
+                                    <!-- Cargado por JavaScript -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
+
+    <!-- ================= MODAL CREAR / EDITAR USUARIO ================= -->
+    <div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="titulo-modal">Crear Nuevo Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <form id="form-mantenedor-usuario">
+                        <input type="hidden" id="usuario-index">
+                        
+                        <div class="mb-3">
+                            <label for="admin-nombre" class="form-label fw-semibold small">Nombre completo</label>
+                            <input type="text" class="form-control" id="admin-nombre" required placeholder="Ej. Ana Pérez">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="admin-email" class="form-label fw-semibold small">Correo electrónico</label>
+                            <input type="email" class="form-control" id="admin-email" required placeholder="correo@ejemplo.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="admin-password" class="form-label fw-semibold small">Contraseña</label>
+                            <input type="password" class="form-control" id="admin-password" required placeholder="4 a 10 caracteres">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="admin-rol" class="form-label fw-semibold small">Rol del Sistema</label>
+                            <select class="form-select" id="admin-rol" required>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Recepcionista">Recepcionista</option>
+                                <option value="Cliente">Cliente (Dueño de mascota)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Guardar Usuario</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ================= FOOTER ================= -->
     <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
@@ -114,73 +157,10 @@
         </div>
     </footer>
 
-    <!-- Scripts de Bootstrap y lógica de seguridad admin -->
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Validar si hay una sesión activa y si es Administrador o Recepcionista
-            const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
-
-            if (!sesionActiva) {
-                alert("Acceso denegado. Debe iniciar sesión para ingresar al panel.");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // Mostrar bienvenida con rol en el navbar
-            document.getElementById('info-usuario-admin').innerHTML = `👤 <b>${sesionActiva.nombre}</b> <span class="badge bg-warning text-dark">${sesionActiva.rol}</span>`;
-
-            // 2. Botón de cerrar sesión
-            document.getElementById('btn-cerrar-sesion').addEventListener('click', function() {
-                localStorage.removeItem('sesion_activa');
-                window.location.href = 'login.html';
-            });
-
-            // 3. Cargar la lista de usuarios desde localStorage (mantenedor de usuarios)
-            const tablaUsuariosBody = document.getElementById('tabla-usuarios-body');
-            const listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
-            
-            tablaUsuariosBody.innerHTML = '';
-            listaUsuarios.forEach((usr, index) => {
-                let fila = `<tr>
-                    <td>${usr.nombre || 'Usuario sin nombre'}</td>
-                    <td>${usr.email}</td>
-                    <td><span class="badge bg-secondary">${usr.rol}</span></td>
-                    <td>
-                        <button class="btn btn-outline-danger btn-sm" onclick="eliminarUsuario(${index})">Eliminar</button>
-                    </td>
-                </tr>`;
-                tablaUsuariosBody.innerHTML += fila;
-            });
-
-            // 4. Cargar la lista de citas agendadas desde localStorage
-            const tablaCitasBody = document.getElementById('tabla-citas-body');
-            const listaCitas = JSON.parse(localStorage.getItem('citas_vet')) || [];
-            
-            tablaCitasBody.innerHTML = '';
-            if (listaCitas.length === 0) {
-                tablaCitasBody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">No hay citas agendadas actualmente.</td></tr>`;
-            } else {
-                listaCitas.forEach(cita => {
-                    let filaCita = `<tr>
-                        <td><span class="fw-semibold text-primary">${cita.servicio}</span></td>
-                        <td>${cita.fecha}</td>
-                        <td>${cita.hora}</td>
-                    </tr>`;
-                    tablaCitasBody.innerHTML += filaCita;
-                });
-            }
-        });
-
-        // Función global para eliminar usuario de prueba en el mantenedor
-        function eliminarUsuario(index) {
-            let listaUsuarios = JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
-            if (confirm(`¿Estás seguro de eliminar al usuario ${listaUsuarios[index].email}?`)) {
-                listaUsuarios.splice(index, 1);
-                localStorage.setItem('usuarios_sistema', JSON.stringify(listaUsuarios));
-                location.reload();
-            }
-        }
-    </script>
+    
+    <!-- Archivo JS externo para el Panel Admin -->
+    <script src="js/admin.js"></script>
 </body>
 </html>

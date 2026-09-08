@@ -5,24 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Bloquear fechas pasadas usando la fecha actual del sistema
     if (fechaInput) {
-        const hoy = new Date().toISOString().split('T')[0];
-        fechaInput.min = hoy;
+        fechaInput.min = new Date().toISOString().split('T')[0];
+        fechaInput.addEventListener('change', actualizarHorasDisponibles);
     }
 
     // Función para actualizar las horas disponibles según la fecha y la hora actual
     function actualizarHorasDisponibles() {
         const fechaSeleccionada = fechaInput.value;
-        
-        // Si no hay fecha seleccionada, limpiar y salir
-        if (!fechaSeleccionada) {
-            for (let option of horaSelect.options) {
-                if (option.value === "") continue;
-                option.disabled = false;
-                option.text = `${option.value} (Disponible)`;
-            }
-            return;
-        }
-
         const ahora = new Date();
         const hoyStr = ahora.toISOString().split('T')[0];
         const horaActual = ahora.getHours();
@@ -30,15 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Obtener citas ya guardadas en localStorage
         const citasGuardadas = JSON.parse(localStorage.getItem('citas_vet')) || [];
-        
-        // Filtrar qué horas ya están ocupadas para esta fecha
-        const horasOcupadas = citasGuardadas
-            .filter(c => c.fecha === fechaSeleccionada)
-            .map(c => c.hora);
+        const horasOcupadas = citasGuardadas.filter(c => c.fecha === fechaSeleccionada).map(c => c.hora);
 
         // Recorrer las opciones del select y deshabilitar las pasadas u ocupadas
         for (let option of horaSelect.options) {
-            if (option.value === "") continue;
+            if (!option.value) continue;
             
             let deshabilitar = false;
             let textoExtra = "";
@@ -58,19 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 textoExtra = " (Ocupada)";
             }
 
-            if (deshabilitar) {
-                option.disabled = true;
-                option.text = `${option.value}${textoExtra}`;
-            } else {
-                option.disabled = false;
-                option.text = `${option.value} (Disponible)`;
-            }
+            option.disabled = deshabilitar;
+            option.text = `${option.value} ${deshabilitar ? textoExtra : '(Disponible)'}`;
         }
-    }
-
-    // Escuchar cuando cambien la fecha
-    if (fechaInput) {
-        fechaInput.addEventListener('change', actualizarHorasDisponibles);
     }
 
     // Manejar el envío del formulario de reserva
@@ -94,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (fecha === hoyStr && hora) {
-                const [optHora, optMin] = hora.split(':'.map(Number));
+                const [optHora, optMin] = hora.split(':').map(Number); // Corrección aplicada aquí
                 if (optHora < horaActual || (optHora === horaActual && optMin <= minActual)) {
                     alert("No puedes seleccionar un horario que ya pasó el día de hoy.");
                     return;
@@ -103,21 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (servicio && fecha && hora) {
                 // Guardar en localStorage
-                const nuevaCita = { servicio, fecha, hora };
-                let citasGuardadas = JSON.parse(localStorage.getItem('citas_vet')) || [];
-                citasGuardadas.push(nuevaCita);
-                localStorage.setItem('citas_vet', JSON.stringify(citasGuardadas));
+                const citas = JSON.parse(localStorage.getItem('citas_vet')) || [];
+                citas.push({ servicio, fecha, hora });
+                localStorage.setItem('citas_vet', JSON.stringify(citas));
 
                 // Mostrar alerta de éxito
                 const alerta = document.getElementById('alerta-exito');
-                alerta.textContent = `¡Cita para "${servicio}" reservada con éxito el día ${fecha} a las ${hora}!`;
-                alerta.classList.remove('d-none');
+                if (alerta) {
+                    alerta.textContent = `¡Cita para "${servicio}" reservada con éxito el día ${fecha} a las ${hora}!`;
+                    alerta.classList.remove('d-none');
+                }
 
                 actualizarHorasDisponibles();
-
-                document.getElementById('servicio-cita').value = "";
-                fechaInput.value = "";
-                horaSelect.value = "";
+                formAgenda.reset();
             }
         });
     }
