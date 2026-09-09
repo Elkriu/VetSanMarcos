@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     cargarTablaUsuariosLectura();
     cargarTablaCitas();
+    cargarTablaMensajes();
     configurarAgendamientoManual();
 });
 
@@ -74,6 +75,30 @@ function cargarTablaCitas() {
                     <small class="text-muted d-block mb-1">Dueño: ${clienteRef}</small>
                     <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="eliminarCita(${index})">Cancelar</button>
                 </td>
+            </tr>`;
+    });
+}
+
+// Renderizar mensajes de contacto en el panel de recepción
+function cargarTablaMensajes() {
+    const tbody = document.getElementById('tabla-mensajes-body');
+    if (!tbody) return;
+
+    const mensajes = obtenerDatos('mensajes_contacto');
+    tbody.innerHTML = '';
+
+    if (mensajes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No hay mensajes de contacto nuevos.</td></tr>`;
+        return;
+    }
+
+    mensajes.forEach((m) => {
+        tbody.innerHTML += `
+            <tr>
+                <td><small class="text-muted">${m.fecha}</small></td>
+                <td class="fw-semibold">${m.nombre}</td>
+                <td><a href="mailto:${m.email}" class="text-decoration-none">${m.email}</a></td>
+                <td><span class="text-secondary">${m.comentario}</span></td>
             </tr>`;
     });
 }
