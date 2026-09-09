@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Validar sesión activa exclusiva para Recepcionista (o Administrador)
     const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
     
     if (!sesionActiva || (sesionActiva.rol !== 'Recepcionista' && sesionActiva.rol !== 'Administrador')) {
@@ -18,17 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'login.html';
     });
 
-    // Cargar datos en las tablas
     cargarTablaUsuariosLectura();
     cargarTablaCitas();
 });
 
-// Obtener datos del localStorage
 function obtenerUsuarios() {
     return JSON.parse(localStorage.getItem('usuarios_sistema')) || [];
 }
 
-// Cargar listado de usuarios en modo lectura (sin botones destructivos de edición o eliminación)
 function cargarTablaUsuariosLectura() {
     const tbody = document.getElementById('tabla-usuarios-body');
     if (!tbody) return;
@@ -46,14 +42,29 @@ function cargarTablaUsuariosLectura() {
     });
 }
 
-// Cargar citas agendadas para que la recepcionista las supervise
 function cargarTablaCitas() {
     const tbody = document.getElementById('tabla-citas-body');
     if (!tbody) return;
 
     const citas = JSON.parse(localStorage.getItem('citas_vet')) || [];
     
-    tbody.innerHTML = citas.length === 0 
-        ? `<tr><td colspan="3" class="text-center text-muted py-3">No hay citas agendadas actualmente.</td></tr>`
-        : citas.map(c => `<tr><td><span class="fw-semibold text-primary">${c.servicio}</span></td><td>${c.fecha}</td><td>${c.hora}</td></tr>`).join('');
+    tbody.innerHTML = '';
+    if (citas.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-3">No hay citas agendadas actualmente.</td></tr>`;
+        return;
+    }
+
+    citas.forEach(c => {
+        // Si hay citas viejas guardadas sin tipoMascota, evitamos que falle mostrando un texto por defecto
+        let mascotaTexto = c.tipoMascota ? c.tipoMascota : 'No especificada';
+
+        tbody.innerHTML += `
+            <tr>
+                <td><span class="fw-semibold text-primary">${c.servicio}</span></td>
+                <td><span class="badge bg-info text-dark">${mascotaTexto}</span></td>
+                <td>${c.fecha}</td>
+                <td>${c.hora}</td>
+            </tr>
+        `;
+    });
 }

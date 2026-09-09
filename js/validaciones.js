@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // 0. USUARIOS PRECARGADOS
     if (!localStorage.getItem('usuarios_sistema')) {
         localStorage.setItem('usuarios_sistema', JSON.stringify([
             { email: 'admin@sanmarcos.cl', password: 'Admin1!', rol: 'Administrador', nombre: 'Carlos Admin', suspendido: false },
@@ -9,18 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ]));
     }
 
-    // 1. CAMBIO DE VISTAS (LOGIN <-> REGISTRO)
     const sLogin = document.getElementById('seccion-login');
     const sReg = document.getElementById('seccion-registro');
     
     document.getElementById('ir-a-registro')?.addEventListener('click', (e) => { e.preventDefault(); sLogin.style.display = 'none'; sReg.style.display = 'block'; });
     document.getElementById('ir-a-login')?.addEventListener('click', (e) => { e.preventDefault(); sReg.style.display = 'none'; sLogin.style.display = 'block'; });
 
-    // Expresiones regulares
     const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|duoc|support|sanmarcos)\.(com|cl|net|org)$/;
     const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
 
-    // Función auxiliar para marcar campos como válidos o inválidos de Bootstrap
     function marcarCampo(input, esValido, mensajeError = '') {
         input.classList.remove('is-valid', 'is-invalid');
         input.classList.add(esValido ? 'is-valid' : 'is-invalid');
@@ -28,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (errorSpan) errorSpan.textContent = mensajeError;
     }
 
-    // 2. VERIFICACION DE LOGIN
     document.getElementById('form-login')?.addEventListener('submit', function(e) {
         e.preventDefault();
         let emailInput = document.getElementById('login-email');
@@ -47,11 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert(`¡Bienvenido, ${user.nombre}! Redirigiendo...`);
             localStorage.setItem('sesion_activa', JSON.stringify(user));
             
-            // Redirección por roles diferenciada (Admin, Recepcionista, Cliente)
             if (user.rol === 'Administrador') {
                 window.location.href = 'admin.html';
             } else if (user.rol === 'Recepcionista') {
-                window.location.href = 'recepcion.html'
+                window.location.href = 'recepcion.html';
             } else {
                 window.location.href = 'inicio.html';
             }
@@ -62,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 3. REGISTRO DE USUARIOS
     document.getElementById('form-registro')?.addEventListener('submit', function(e) {
         e.preventDefault();
         let run = document.getElementById('reg-run');
@@ -73,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let ok = true;
 
-        // Validaciones individuales limpias
         if (!run.value.trim() || run.value.length < 7 || run.value.includes('.') || run.value.includes('-')) {
             marcarCampo(run, false, 'El RUN debe ir sin puntos ni guion.'); ok = false;
         } else { marcarCampo(run, true); }

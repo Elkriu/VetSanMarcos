@@ -3,16 +3,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const authContainer = document.getElementById('nav-auth-container');
 
     if (authContainer && sesionActiva) {
-        let destinoPanel = 'inicio.html';
+        let destinoPanel = 'misCitas.html';
         let textoBotonPanel = 'Mis Citas';
 
-        // Validar el destino exacto según el rol del usuario activo
         if (sesionActiva.rol === 'Administrador') {
             destinoPanel = 'admin.html';
             textoBotonPanel = 'Panel Admin';
         } else if (sesionActiva.rol === 'Recepcionista') {
-            destinoPanel = 'recepcion.html'; 
+            destinoPanel = 'recepcion.html';
             textoBotonPanel = 'Panel Recepción';
+        } else if (sesionActiva.rol === 'Cliente') {
+            destinoPanel = 'misCitas.html';
+            textoBotonPanel = 'Mis Citas';
         }
 
         authContainer.innerHTML = `
