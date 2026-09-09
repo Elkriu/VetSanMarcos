@@ -12,12 +12,12 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold text-warning" href="recepcion.html">
+                <a class="navbar-brand fw-bold text-primary" href="recepcion.html">
                     📋 Recepción - Veterinaria San Marcos
                 </a>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-lg-center gap-3">
-                        <li class="nav-item text-white small" id="info-usuario-recepcion"></li>
+                        <li class="nav-item text-dark small" id="info-usuario-recepcion"></li>
                         <li class="nav-item">
                             <a href="inicio.html" class="btn btn-outline-light btn-sm px-3 text-dark bg-white">🌐 Ver Sitio Público</a>
                         </li>
@@ -32,18 +32,70 @@
 
     <main class="py-5">
         <div class="container">
+            
+            <!-- Encabezado del Panel -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-secondary border-4">
                         <h1 class="h3 fw-bold text-dark mb-1">Panel de Recepción y Citas</h1>
-                        <p class="text-muted small mb-0">Visualización de clientes y administración de la agenda médica en línea.</p>
+                        <p class="text-muted small mb-0">Visualización de clientes, control de acceso restringido y agendamiento presencial/telefónico.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-4 mb-5">
+            <!-- Formulario de Agendamiento Manual -->
+            <div class="row mb-4">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-primary border-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">🩺 Registrar Cita</h3>
+                        <form id="form-cita-manual" class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Nombre del Cliente</label>
+                                <input type="text" class="form-control form-control-sm" id="manual-nombre" placeholder="Ej: María Pérez" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-semibold">Servicio</label>
+                                <select class="form-select form-select-sm" id="manual-servicio" required>
+                                    <option value="" selected disabled>-- Elija --</option>
+                                    <option value="Consulta General">Consulta General</option>
+                                    <option value="Vacunación">Vacunación</option>
+                                    <option value="Cirugía Menor">Cirugía Menor</option>
+                                    <option value="Desparasitación">Desparasitación</option>
+                                    <option value="Control de Peso">Control de Peso</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">Tipo de Mascota</label>
+                                <select class="form-select form-select-sm" id="manual-mascota" required>
+                                    <option value="" selected disabled>-- Elija --</option>
+                                    <option value="Perro">Perro</option>
+                                    <option value="Gato">Gato</option>
+                                    <option value="Conejo">Conejo</option>
+                                    <option value="Ave">Ave</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">Fecha</label>
+                                <input type="date" class="form-control form-control-sm" id="manual-fecha" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">Hora</label>
+                                <select class="form-select form-select-sm" id="manual-hora" required>
+                                    <option value="" selected disabled>-- Primero seleccione una fecha --</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-end mt-2">
+                                <button type="submit" class="btn btn-primary btn-sm px-4 fw-semibold">Registrar Cita</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Agenda de Citas -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-success border-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="h5 fw-bold text-dark mb-0">📅 Agenda de Citas Médicas</h3>
                             <span class="badge bg-success">En tiempo real</span>
@@ -56,6 +108,7 @@
                                         <th>Mascota</th>
                                         <th>Fecha</th>
                                         <th>Hora</th>
+                                        <th class="text-end">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-citas-body"></tbody>
@@ -63,12 +116,15 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Directorio de Usuarios Registrados -->
+            <div class="row mb-4">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-dark border-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="h5 fw-bold text-dark mb-0">👥 Directorio de Usuarios Registrados</h3>
-                            <span class="badge bg-secondary">Consulta</span>
+                            <span class="badge bg-secondary">Seguridad R.</span>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
@@ -77,7 +133,7 @@
                                         <th>Nombre</th>
                                         <th>Correo electrónico</th>
                                         <th>Rol asignado</th>
-                                        <th>Estado</th>
+                                        <th>Estado / Permiso</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-usuarios-body"></tbody>
@@ -86,6 +142,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </main>
 
