@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novedades y Consejos - Veterinaria San Marcos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary" href="inicio.html">🐾 Veterinaria San Marcos</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav align-items-lg-center gap-2">
+                        <li class="nav-item"><a class="nav-link" href="inicio.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
+                        <li class="nav-item"><a class="nav-link active fw-semibold" href="novedades.html">Novedades</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
+                        <li class="nav-item ms-lg-2" id="nav-auth-container">
+                            <a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="py-5 flex-grow-1">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">Blog y Consejos</span>
+                    <h1 class="display-5 fw-bold text-dark">Novedades y <span class="text-primary">Actualidad Veterinaria</span></h1>
+                    <p class="text-muted">Consejos de nuestros especialistas para el cuidado óptimo de perros, gatos, aves y conejos.</p>
+                </div>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Publicación 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="img/vacuna.jpg" class="card-img-top" alt="Vacunación" style="height: 180px; object-fit: cover;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="badge bg-primary bg-opacity-10 text-White w-fit px-2 py-1 rounded small mb-2">Prevención</span>
+                            <h3 class="fw-bold h6 text-dark">Importancia de la Vacunación Anual</h3>
+                            <p class="text-muted small my-2">Protege a tu perro y gato frente a virus mortales con refuerzos al día.</p>
+                            <div class="mt-auto pt-3">
+                                <a href="detalle-noticia.html?id=1" class="btn btn-outline-primary btn-sm w-100">Leer más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publicación 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="img/nutricion.jpg" class="card-img-top" alt="Nutrición" style="height: 180px; object-fit: cover;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="badge bg-primary bg-opacity-10 text-White w-fit px-2 py-1 rounded small mb-2">Nutrición</span>
+                            <h3 class="fw-bold h6 text-dark">Control de Peso: Evitando la Obesidad</h3>
+                            <p class="text-muted small my-2">Consejos de porciones y rutinas saludables para evitar problemas cardíacos.</p>
+                            <div class="mt-auto pt-3">
+                                <a href="detalle-noticia.html?id=2" class="btn btn-outline-primary btn-sm w-100">Leer más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publicación 3 (Aves) -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="img/aves.webp" class="card-img-top" alt="Aves" style="height: 180px; object-fit: cover;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="badge bg-primary bg-opacity-10 text-White w-fit px-2 py-1 rounded small mb-2">Especialidades</span>
+                            <h3 class="fw-bold h6 text-dark">Cuidados Esenciales para Aves</h3>
+                            <p class="text-muted small my-2">Aprende sobre su hábitat, plumaje y alimentación equilibrada en casa.</p>
+                            <div class="mt-auto pt-3">
+                                <a href="detalle-noticia.html?id=3" class="btn btn-outline-primary btn-sm w-100">Leer más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publicación 4 (Conejos) -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="img/conejos.jpg" class="card-img-top" alt="Conejos" style="height: 180px; object-fit: cover;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="badge bg-primary bg-opacity-10 text-White w-fit px-2 py-1 rounded small mb-2">Exóticos</span>
+                            <h3 class="fw-bold h6 text-dark">Medicina Preventiva en Conejos</h3>
+                            <p class="text-muted small my-2">Claves sobre el uso de heno fresco, desgaste dental y salud digestiva.</p>
+                            <div class="mt-auto pt-3">
+                                <a href="detalle-noticia.html?id=4" class="btn btn-outline-primary btn-sm w-100">Leer más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
+        <div class="container"><p class="mb-0">©2009-2026 Veterinaria San Marcos. Todos los derechos reservados.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="js/auth-nav.js"></script>
+</body>
+</html>

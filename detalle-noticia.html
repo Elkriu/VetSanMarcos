@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicios - Veterinaria San Marcos</title>
+    <title>Detalle de Noticia - Veterinaria San Marcos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="css/estilos.css">
 </head>
@@ -18,9 +18,9 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav align-items-lg-center gap-2">
                         <li class="nav-item"><a class="nav-link" href="inicio.html">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link active fw-semibold" href="servicios.html">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
                         <li class="nav-item"><a class="nav-link" href="nosotros.html">Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="novedades.html">Novedades</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="novedades.html">Novedades</a></li>
                         <li class="nav-item"><a class="nav-link" href="contacto.html">Contacto</a></li>
                         <li class="nav-item ms-lg-2" id="nav-auth-container">
                             <a class="btn btn-primary btn-sm px-3" href="login.html">Iniciar Sesión</a>
@@ -33,34 +33,14 @@
 
     <main class="py-5 flex-grow-1">
         <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col-12">
-                    <span class="badge bg-primary bg-opacity-10 text-white px-3 py-2 rounded-pill mb-3 fw-semibold">Nuestras Prestaciones</span>
-                    <h1 class="display-5 fw-bold text-dark">Servicios y <span class="text-primary">Especialidades</span></h1>
-                    <p class="text-muted">Selecciona los servicios de tu interés para agregarlos a tu lista de reserva preliminar.</p>
-                </div>
-            </div>
-
-            <!-- PANEL DE SELECCIÓN / LISTA DE INTERÉS (Requisito 4.8) -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-primary border-4">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                            <div>
-                                <h4 class="h5 fw-bold text-dark mb-1">📋 Tu Lista de Reserva Preliminar</h4>
-                                <p class="text-muted small mb-0">Servicios marcados para tu próxima atención.</p>
-                            </div>
-                            <div id="resumen-seleccion" class="d-flex align-items-center gap-2 flex-wrap">
-                                <!-- Se llena dinámicamente con JS -->
-                            </div>
-                        </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <a href="novedades.html" class="btn btn-outline-secondary btn-sm mb-4">← Volver a Novedades</a>
+                    
+                    <div id="contenido-detalle" class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+                        <!-- El contenido detallado se carga dinámicamente mediante JavaScript -->
                     </div>
                 </div>
-            </div>
-
-            <!-- CONTENEDOR DEL CATÁLOGO DINÁMICO (Requisito 4.7) -->
-            <div class="row g-4 justify-content-center" id="catalogo-servicios">
-                <!-- Generado por JavaScript desde un arreglo -->
             </div>
         </div>
     </main>
@@ -71,6 +51,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/servicios-catalogo.js"></script>
+    <script src="js/novedades.js"></script>
 </body>
 </html>
