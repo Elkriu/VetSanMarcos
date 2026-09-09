@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|duoc|support|sanmarcos)\.(com|cl|net|org)$/;
     const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
+    
+    // Expresión regular para el RUN: 7 a 8 dígitos seguidos de un dígito verificador (0-9 o K/k), sin puntos ni guion (Total: 8 a 9 caracteres)
+    const rxRun = /^[0-9]{7,8}[0-9kK]$/;
 
     function marcarCampo(input, esValido, mensajeError = '') {
         input.classList.remove('is-valid', 'is-invalid');
@@ -66,9 +69,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let ok = true;
 
-        if (!run.value.trim() || run.value.length < 7 || run.value.includes('.') || run.value.includes('-')) {
-            marcarCampo(run, false, 'El RUN debe ir sin puntos ni guion.'); ok = false;
-        } else { marcarCampo(run, true); }
+        // Validación estricta del RUN: 8 a 9 caracteres, sin puntos ni guion, terminando en número o K
+        let runVal = run.value.trim();
+        if (!rxRun.test(runVal)) {
+            marcarCampo(run, false, 'El RUN debe tener entre 8 y 9 caracteres en total, sin puntos ni guion (ej: 123456789 o 12345678K).'); 
+            ok = false; 
+        } else { 
+            marcarCampo(run, true); 
+        }
 
         if (!nombre.value.trim() || nombre.value.length > 50) { marcarCampo(nombre, false); ok = false; } else { marcarCampo(nombre, true); }
         if (!apellido.value.trim() || apellido.length > 100) { marcarCampo(apellido, false); ok = false; } else { marcarCampo(apellido, true); }
@@ -91,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             usuarios.push({
+                run: runVal,
                 email: mailUser,
                 password: pass.value,
                 rol: 'Cliente',
