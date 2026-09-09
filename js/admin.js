@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let usuarios = obtenerUsuarios();
 
-        // Protección extra: Evitar cambiar el rol del admin principal
+        // Evitar cambiar el rol del admin principal
         if (index !== "" && usuarios[index].email === 'admin@sanmarcos.cl' && rol !== 'Administrador') {
             alert('No se puede cambiar el rol del administrador principal.');
             return;

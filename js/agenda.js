@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
 
     if (!sesionActiva) {
-        // Si no ha iniciado sesión, bloqueamos el formulario y mostramos un aviso directo
         if (formAgenda) {
             formAgenda.innerHTML = `
                 <div class="alert alert-warning text-center p-4 border-0 shadow-sm rounded-4">
@@ -17,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-        return; // Detenemos la ejecución del resto del script de fechas
+        return;
     }
 
     // Bloquear fechas pasadas usando la fecha actual del sistema
@@ -26,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fechaInput.addEventListener('change', actualizarHorasDisponibles);
     }
 
-    // Función para actualizar las horas disponibles según la fecha y la hora actual
+    // Función para actualizar y renderizar las horas disponibles sin errores visuales
     function actualizarHorasDisponibles() {
         const fechaSeleccionada = fechaInput.value;
         const ahora = new Date();
@@ -37,28 +36,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const citasGuardadas = JSON.parse(localStorage.getItem('citas_vet')) || [];
         const horasOcupadas = citasGuardadas.filter(c => c.fecha === fechaSeleccionada).map(c => c.hora);
 
-        for (let option of horaSelect.options) {
-            if (!option.value) continue;
-            
+        // Limpiamos y recreamos las opciones limpiamente para evitar solapamientos
+        horaSelect.innerHTML = '<option value="" selected disabled>-- Seleccione una hora --</option>';
+        const horariosFijos = ["10:00", "11:30", "15:00", "17:15"];
+
+        horariosFijos.forEach(h => {
             let deshabilitar = false;
-            let textoExtra = "";
+            let textoExtra = " (Disponible)";
 
             if (fechaSeleccionada === hoyStr) {
-                const [optHora, optMin] = option.value.split(':').map(Number);
+                const [optHora, optMin] = h.split(':').map(Number);
                 if (optHora < horaActual || (optHora === horaActual && optMin <= minActual)) {
                     deshabilitar = true;
                     textoExtra = " (Pasada)";
                 }
             }
 
-            if (horasOcupadas.includes(option.value)) {
+            if (horasOcupadas.includes(h)) {
                 deshabilitar = true;
                 textoExtra = " (Ocupada)";
             }
 
+            const option = document.createElement('option');
+            option.value = h;
+            option.textContent = `${h} hrs.${textoExtra}`;
             option.disabled = deshabilitar;
-            option.text = `${option.value} ${deshabilitar ? textoExtra : '(Disponible)'}`;
-        }
+            horaSelect.appendChild(option);
+        });
     }
 
     // Manejar el envío del formulario de reserva
@@ -91,9 +95,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (servicio && tipoMascota && fecha && hora) {
                 const emailCliente = sesionActiva.email;
-
-                // Guardar en localStorage asociando la cita al correo del usuario activo
                 const citas = JSON.parse(localStorage.getItem('citas_vet')) || [];
+
+                // Validar que el horario no haya sido ocupado por otro usuario justo antes
+                if (citas.some(c => c.fecha === fecha && c.hora === hora)) {
+                    alert("⚠️ Error: Este horario ya ha sido ocupado. Por favor seleccione otro.");
+                    return;
+                }
+
+                // Guardar en localStorage
                 citas.push({ servicio, tipoMascota, fecha, hora, emailCliente });
                 localStorage.setItem('citas_vet', JSON.stringify(citas));
 

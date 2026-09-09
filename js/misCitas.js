@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // 1. Validar que haya una sesión activa de cliente
     const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
     
     if (!sesionActiva) {
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    // Mostrar nombre del usuario en el navbar
     const infoCliente = document.getElementById('info-usuario-cliente');
     if (infoCliente) {
         infoCliente.innerHTML = `👤 <b>${sesionActiva.nombre}</b>`;
@@ -16,15 +18,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function cargarMisCitas(emailUsuario) {
-    const tbody = document.getElementById('tabla-misCitas-body');
+    const tbody = document.getElementById('tabla-mis-citas-body');
     if (!tbody) return;
 
+    // Obtenemos todas las citas guardadas
     const todasLasCitas = JSON.parse(localStorage.getItem('citas_vet')) || [];
     
-    // Filtro por correo del usuario activo
+    // FILTRAR ESTRICTAMENTE por el correo del usuario activo (comparando en minúsculas)
     const misCitas = todasLasCitas.filter(c => {
-        if (!c.emailCliente) return false;
-        return c.emailCliente.toLowerCase() === emailUsuario.toLowerCase();
+        // Verificamos tanto 'emailCliente' como cualquier otra propiedad de correo por seguridad
+        const correoCita = c.emailCliente || c.email || '';
+        if (!correoCita) return false;
+        return correoCita.toLowerCase() === emailUsuario.toLowerCase();
     });
     
     tbody.innerHTML = '';
