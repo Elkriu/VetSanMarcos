@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('usuarios_sistema', JSON.stringify([
             { email: 'admin@sanmarcos.cl', password: 'Admin1!', rol: 'Administrador', nombre: 'Carlos Admin', suspendido: false },
             { email: 'recepcion@sanmarcos.cl', password: 'Recepc1!', rol: 'Recepcionista', nombre: 'Camila Riquelme', suspendido: false },
-            { email: 'cliente@gmail.com', password: 'Cliente1!', rol: 'Cliente', nombre: 'Juan Bravo', suspendido: false }
+            { email: 'cristianv@gmail.com', password: 'Cliente1!', rol: 'Cliente', nombre: 'Cristian Vega', suspendido: false }
         ]));
     }
 
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('ir-a-registro')?.addEventListener('click', (e) => { e.preventDefault(); sLogin.style.display = 'none'; sReg.style.display = 'block'; });
     document.getElementById('ir-a-login')?.addEventListener('click', (e) => { e.preventDefault(); sReg.style.display = 'none'; sLogin.style.display = 'block'; });
 
-    const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|duoc|support|sanmarcos)\.(com|cl|net|org)$/;
+    const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|sanmarcos)\.(com|cl)$/;
     const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
     
     // Expresión regular para el RUN: 7 a 8 dígitos seguidos de un dígito verificador (0-9 o K/k), sin puntos ni guion (Total: 8 a 9 caracteres)
