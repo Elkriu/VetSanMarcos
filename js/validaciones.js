@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!localStorage.getItem('usuarios_sistema')) {
         localStorage.setItem('usuarios_sistema', JSON.stringify([
-            { email: 'admin@sanmarcos.cl', password: 'Admin1!', rol: 'Administrador', nombre: 'Carlos Admin', suspendido: false },
+            { email: 'admin@sanmarcos.cl', password: 'Admin1!', rol: 'Administrador', nombre: 'Admin', suspendido: false },
             { email: 'recepcion@sanmarcos.cl', password: 'Recepc1!', rol: 'Recepcionista', nombre: 'Camila Riquelme', suspendido: false },
             { email: 'cristianv@gmail.com', password: 'Cliente1!', rol: 'Cliente', nombre: 'Cristian Vega', suspendido: false }
         ]));
@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Expresión regular para el RUN: 7 a 8 dígitos seguidos de un dígito verificador (0-9 o K/k), sin puntos ni guion (Total: 8 a 9 caracteres)
     const rxRun = /^[0-9]{7,8}[0-9kK]$/;
+    // Expresión regular para prohibir números en nombres y apellidos
+    const rxSoloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/;
 
     function marcarCampo(input, esValido, mensajeError = '') {
         input.classList.remove('is-valid', 'is-invalid');
@@ -77,9 +79,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else { 
             marcarCampo(run, true); 
         }
-
-        if (!nombre.value.trim() || nombre.value.length > 50) { marcarCampo(nombre, false); ok = false; } else { marcarCampo(nombre, true); }
-        if (!apellido.value.trim() || apellido.length > 100) { marcarCampo(apellido, false); ok = false; } else { marcarCampo(apellido, true); }
+        //validacion de SOLO LETRAS para nombre y apellido
+        if (!rxSoloLetras.test(nombre.value.trim())) { 
+            marcarCampo(nombre, false, 'El nombre solo debe contener letras.'); 
+            ok = false; 
+        } else { 
+            marcarCampo(nombre, true); 
+        }
+        if (!rxSoloLetras.test(apellido.value.trim())) { 
+            marcarCampo(apellido, false, 'El apellido solo debe contener letras.'); 
+            ok = false; 
+        } else { 
+            marcarCampo(apellido, true); 
+        }
 
         if (!rxCorreo.test(email.value.trim())) {
             marcarCampo(email, false, 'Ingrese un correo válido.'); ok = false;
