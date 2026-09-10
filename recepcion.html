@@ -33,6 +33,7 @@
     <main class="py-5">
         <div class="container">
             
+            <!-- Encabezado del Panel -->
             <section class="row mb-4">
                 <article class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-secondary border-4">
@@ -42,6 +43,7 @@
                 </article>
             </section>
 
+            <!-- Formulario de Agendamiento Manual -->
             <section class="row mb-4">
                 <article class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-primary border-4">
@@ -90,6 +92,7 @@
                 </article>
             </section>
 
+            <!-- Tabla de Agenda de Citas -->
             <section class="row mb-4">
                 <article class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-success border-4">
@@ -115,6 +118,7 @@
                 </article>
             </section>
 
+            <!-- Mensajes de Contacto Recibidos -->
             <section class="row mb-4">
                 <article class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-warning border-4">
@@ -139,6 +143,7 @@
                 </article>
             </section>
 
+            <!-- Directorio de Usuarios Registrados -->
             <section class="row mb-4">
                 <article class="col-12">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white border-start border-dark border-4">
@@ -165,6 +170,41 @@
 
         </div>
     </main>
+
+    <!-- ================= MODAL MODIFICAR CITA (RECEPCIÓN) ================= -->
+    <div class="modal fade" id="modalModificarCita" tabindex="-1" aria-labelledby="modalModificarCitaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="modalModificarCitaLabel">Modificar Cita Médica</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <form id="form-modificar-cita">
+                        <input type="hidden" id="mod-index-cita">
+                        
+                        <div class="mb-3">
+                            <label for="mod-fecha" class="form-label fw-semibold small">Nueva Fecha</label>
+                            <input type="date" class="form-control" id="mod-fecha" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mod-hora" class="form-label fw-semibold small">Nueva Hora</label>
+                            <select class="form-select" id="mod-hora" required>
+                                <option value="" selected disabled>-- Seleccione una hora --</option>
+                                <option value="10:00">10:00 hrs.</option>
+                                <option value="11:30">11:30 hrs.</option>
+                                <option value="15:00">15:00 hrs.</option>
+                                <option value="17:15">17:15 hrs.</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-semibold py-2">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-white border-top py-4 text-center text-muted small mt-auto">
         <div class="container">

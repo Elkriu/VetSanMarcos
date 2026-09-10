@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fechaInput = document.getElementById('fecha-cita');
     const horaSelect = document.getElementById('hora-cita');
 
-    // 1. Validar sesión activa obligatoria para agendar
+    // Validar sesión activa obligatoria para agendar
     const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
 
     if (!sesionActiva) {
@@ -19,24 +19,32 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Bloquear fechas pasadas usando la fecha actual del sistema
+    // Configurar fecha mínima local en el input date
     if (fechaInput) {
-        fechaInput.min = new Date().toISOString().split('T')[0];
+        const ahoraLocal = new Date();
+        const anioL = ahoraLocal.getFullYear();
+        const mesL = String(ahoraLocal.getMonth() + 1).padStart(2, '0');
+        const diaL = String(ahoraLocal.getDate()).padStart(2, '0');
+        fechaInput.min = `${anioL}-${mesL}-${diaL}`;
+        
         fechaInput.addEventListener('change', actualizarHorasDisponibles);
     }
 
-    // Función para actualizar y renderizar las horas disponibles sin errores visuales
     function actualizarHorasDisponibles() {
         const fechaSeleccionada = fechaInput.value;
         const ahora = new Date();
-        const hoyStr = ahora.toISOString().split('T')[0];
+        
+        const anio = ahora.getFullYear();
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+        const dia = String(ahora.getDate()).padStart(2, '0');
+        const hoyStr = `${anio}-${mes}-${dia}`;
+
         const horaActual = ahora.getHours();
         const minActual = ahora.getMinutes();
         
         const citasGuardadas = JSON.parse(localStorage.getItem('citas_vet')) || [];
         const horasOcupadas = citasGuardadas.filter(c => c.fecha === fechaSeleccionada).map(c => c.hora);
 
-        // Limpiamos y recreamos las opciones limpiamente para evitar solapamientos
         horaSelect.innerHTML = '<option value="" selected disabled>-- Seleccione una hora --</option>';
         const horariosFijos = ["10:00", "11:30", "15:00", "17:15"];
 
@@ -44,14 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
             let deshabilitar = false;
             let textoExtra = " (Disponible)";
 
+            // Solo evaluar horas pasadas si la fecha seleccionada es estrictamente hoy
             if (fechaSeleccionada === hoyStr) {
-                const [optHora, optMin] = h.split(':').map(Number);
-                if (optHora < horaActual || (optHora === horaActual && optMin <= minActual)) {
+                const [optH, optM] = h.split(':').map(Number);
+                if (optH < horaActual || (optH === horaActual && optM <= minActual)) {
                     deshabilitar = true;
                     textoExtra = " (Pasada)";
                 }
             }
 
+            // Validar si ya está ocupada por alguna cita registrada
             if (horasOcupadas.includes(h)) {
                 deshabilitar = true;
                 textoExtra = " (Ocupada)";
@@ -65,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Manejar el envío del formulario de reserva
     if (formAgenda) {
         formAgenda.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -76,7 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const hora = horaSelect.value;
 
             const ahora = new Date();
-            const hoyStr = ahora.toISOString().split('T')[0];
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            const hoyStr = `${anio}-${mes}-${dia}`;
             const horaActual = ahora.getHours();
             const minActual = ahora.getMinutes();
 
@@ -97,13 +109,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const emailCliente = sesionActiva.email;
                 const citas = JSON.parse(localStorage.getItem('citas_vet')) || [];
 
-                // Validar que el horario no haya sido ocupado por otro usuario justo antes
                 if (citas.some(c => c.fecha === fecha && c.hora === hora)) {
                     alert("⚠️ Error: Este horario ya ha sido ocupado. Por favor seleccione otro.");
                     return;
                 }
 
-                // Guardar en localStorage
                 citas.push({ servicio, tipoMascota, fecha, hora, emailCliente });
                 localStorage.setItem('citas_vet', JSON.stringify(citas));
 
@@ -114,6 +124,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 formAgenda.reset();
+                const anioL = ahora.getFullYear();
+                const mesL = String(ahora.getMonth() + 1).padStart(2, '0');
+                const diaL = String(ahora.getDate()).padStart(2, '0');
+                if (fechaInput) fechaInput.min = `${anioL}-${mesL}-${diaL}`;
                 horaSelect.innerHTML = '<option value="" selected disabled>-- Primero seleccione una fecha --</option>';
             }
         });

@@ -7,13 +7,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Mostrar nombre y rol en el navbar de recepción
     const infoRecepcion = document.getElementById('info-usuario-recepcion');
     if (infoRecepcion) {
         infoRecepcion.innerHTML = `👤 <b>${sesionActiva.nombre}</b> <span class="badge bg-warning text-dark">${sesionActiva.rol}</span>`;
     }
 
-    // Botón de cerrar sesión
     document.getElementById('btn-cerrar-sesion')?.addEventListener('click', () => {
         localStorage.removeItem('sesion_activa');
         window.location.href = 'login.html';
@@ -23,13 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarTablaCitas();
     cargarTablaMensajes();
     configurarAgendamientoManual();
+    configurarModalModificar();
 });
 
-// Funciones auxiliares cortas para optimizar la lectura y escritura del localStorage
 const obtenerDatos = (clave) => JSON.parse(localStorage.getItem(clave)) || [];
 const guardarDatos = (clave, datos) => localStorage.setItem(clave, JSON.stringify(datos));
 
-// Directorio de usuarios (Solo lectura de clientes, staff protegido)
 function cargarTablaUsuariosLectura() {
     const tbody = document.getElementById('tabla-usuarios-body');
     if (!tbody) return;
@@ -50,7 +47,6 @@ function cargarTablaUsuariosLectura() {
     });
 }
 
-// Carga y listado de citas en tiempo real
 function cargarTablaCitas() {
     const tbody = document.getElementById('tabla-citas-body');
     if (!tbody) return;
@@ -73,13 +69,13 @@ function cargarTablaCitas() {
                 <td>${c.hora}</td>
                 <td class="text-end">
                     <small class="text-muted d-block mb-1">Dueño: ${clienteRef}</small>
+                    <button class="btn btn-outline-warning btn-sm py-0 px-2 me-1" onclick="abrirModalModificar(${index})">Modificar</button>
                     <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="eliminarCita(${index})">Cancelar</button>
                 </td>
             </tr>`;
     });
 }
 
-// Renderizar mensajes de contacto en el panel de recepción
 function cargarTablaMensajes() {
     const tbody = document.getElementById('tabla-mensajes-body');
     if (!tbody) return;
@@ -103,7 +99,72 @@ function cargarTablaMensajes() {
     });
 }
 
-// Eliminar/Cancelar cita desde el panel
+// Abrir modal de modificación en recepción
+window.abrirModalModificar = function(index) {
+    let citas = obtenerDatos('citas_vet');
+    let cita = citas[index];
+
+    document.getElementById('mod-index-cita').value = index;
+    const fechaInput = document.getElementById('mod-fecha');
+    
+    const ahoraLocal = new Date();
+    const anioL = ahoraLocal.getFullYear();
+    const mesL = String(ahoraLocal.getMonth() + 1).padStart(2, '0');
+    const diaL = String(ahoraLocal.getDate()).padStart(2, '0');
+    fechaInput.min = `${anioL}-${mesL}-${diaL}`;
+    
+    fechaInput.value = cita.fecha;
+    document.getElementById('mod-hora').value = cita.hora;
+
+    let modalEl = document.getElementById('modalModificarCita');
+    let modal = new bootstrap.Modal(modalEl);
+    modal.show();
+};
+
+function configurarModalModificar() {
+    const formModificar = document.getElementById('form-modificar-cita');
+    if (!formModificar) return;
+
+    formModificar.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const index = document.getElementById('mod-index-cita').value;
+        const nuevaFecha = document.getElementById('mod-fecha').value;
+        const nuevaHora = document.getElementById('mod-hora').value;
+
+        let citas = obtenerDatos('citas_vet');
+
+        const ahoraLocal = new Date();
+        const anioL = ahoraLocal.getFullYear();
+        const mesL = String(ahoraLocal.getMonth() + 1).padStart(2, '0');
+        const diaL = String(ahoraLocal.getDate()).padStart(2, '0');
+        const hoyStr = `${anioL}-${mesL}-${diaL}`;
+
+        if (nuevaFecha < hoyStr) {
+            alert("⚠️ No puedes programar una cita en una fecha pasada.");
+            return;
+        }
+
+        const horarioOcupado = citas.some((c, idx) => idx != index && c.fecha === nuevaFecha && c.hora === nuevaHora);
+        if (horarioOcupado) {
+            alert("⚠️ Error: Ya existe otra cita agendada en ese mismo día y horario.");
+            return;
+        }
+
+        citas[index].fecha = nuevaFecha;
+        citas[index].hora = nuevaHora;
+
+        guardarDatos('citas_vet', citas);
+
+        let modalEl = document.getElementById('modalModificarCita');
+        let modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+
+        alert("¡Cita modificada con éxito desde Recepción!");
+        cargarTablaCitas();
+    });
+}
+
 window.eliminarCita = function(index) {
     if (confirm("¿Estás seguro de cancelar esta cita médica?")) {
         let citas = obtenerDatos('citas_vet');
@@ -113,7 +174,7 @@ window.eliminarCita = function(index) {
     }
 };
 
-// Configuración del agendamiento manual con validación de horarios y fechas
+// Configuración de agendamiento manual en recepción con validación exacta de horas (Pasada, Ocupada, Disponible)
 function configurarAgendamientoManual() {
     const formManual = document.getElementById('form-cita-manual');
     const fechaInput = document.getElementById('manual-fecha');
@@ -121,13 +182,24 @@ function configurarAgendamientoManual() {
 
     if (!formManual || !fechaInput || !horaSelect) return;
 
-    const hoyStr = new Date().toISOString().split('T')[0];
+    const ahoraLocal = new Date();
+    const anioL = ahoraLocal.getFullYear();
+    const mesL = String(ahoraLocal.getMonth() + 1).padStart(2, '0');
+    const diaL = String(ahoraLocal.getDate()).padStart(2, '0');
+    const hoyStr = `${anioL}-${mesL}-${diaL}`;
+
     fechaInput.min = hoyStr;
     fechaInput.addEventListener('change', actualizarHorasDisponibles);
 
     function actualizarHorasDisponibles() {
         const fechaSel = fechaInput.value;
         const ahora = new Date();
+        
+        const anio = ahora.getFullYear();
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+        const dia = String(ahora.getDate()).padStart(2, '0');
+        const hoyActualStr = `${anio}-${mes}-${dia}`;
+
         const horaActual = ahora.getHours();
         const minActual = ahora.getMinutes();
         
@@ -135,7 +207,6 @@ function configurarAgendamientoManual() {
             .filter(c => c.fecha === fechaSel)
             .map(c => c.hora);
 
-        // Construcción limpia y dinámica de las opciones del select de horas
         horaSelect.innerHTML = '<option value="" selected disabled>-- Seleccione una hora --</option>';
         const horariosFijos = ["10:00", "11:30", "15:00", "17:15"];
 
@@ -143,7 +214,7 @@ function configurarAgendamientoManual() {
             let deshabilitar = false;
             let textoExtra = " (Disponible)";
 
-            if (fechaSel === hoyStr) {
+            if (fechaSel === hoyActualStr) {
                 const [optH, optM] = h.split(':').map(Number);
                 if (optH < horaActual || (optH === horaActual && optM <= minActual)) {
                     deshabilitar = true;
@@ -175,7 +246,6 @@ function configurarAgendamientoManual() {
 
         const citas = obtenerDatos('citas_vet');
 
-        // Validar doble reserva en la misma fecha y hora exacta
         if (citas.some(c => c.fecha === fecha && c.hora === hora)) {
             alert("⚠️ Error: Ya existe una cita agendada en ese mismo día y horario.");
             return;
@@ -194,7 +264,13 @@ function configurarAgendamientoManual() {
 
             alert(`¡Cita registrada con éxito para ${nombreCliente}!`);
             formManual.reset();
-            fechaInput.min = new Date().toISOString().split('T')[0];
+            
+            const ahoraN = new Date();
+            const anioN = ahoraN.getFullYear();
+            const mesN = String(ahoraN.getMonth() + 1).padStart(2, '0');
+            const diaN = String(ahoraN.getDate()).padStart(2, '0');
+            fechaInput.min = `${anioN}-${mesN}-${diaN}`;
+
             horaSelect.innerHTML = '<option value="" selected disabled>-- Primero seleccione una fecha --</option>';
             cargarTablaCitas();
         }

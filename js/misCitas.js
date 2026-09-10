@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Validar que haya una sesión activa de cliente
     const sesionActiva = JSON.parse(localStorage.getItem('sesion_activa'));
     
     if (!sesionActiva) {
@@ -8,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Mostrar nombre del usuario en el navbar
     const infoCliente = document.getElementById('info-usuario-cliente');
     if (infoCliente) {
         infoCliente.innerHTML = `👤 <b>${sesionActiva.nombre}</b>`;
@@ -21,12 +19,9 @@ function cargarMisCitas(emailUsuario) {
     const tbody = document.getElementById('tabla-mis-citas-body');
     if (!tbody) return;
 
-    // Obtenemos todas las citas guardadas
     const todasLasCitas = JSON.parse(localStorage.getItem('citas_vet')) || [];
     
-    // FILTRAR ESTRICTAMENTE por el correo del usuario activo (comparando en minúsculas)
     const misCitas = todasLasCitas.filter(c => {
-        // Verificamos tanto 'emailCliente' como cualquier otra propiedad de correo por seguridad
         const correoCita = c.emailCliente || c.email || '';
         if (!correoCita) return false;
         return correoCita.toLowerCase() === emailUsuario.toLowerCase();
@@ -38,8 +33,11 @@ function cargarMisCitas(emailUsuario) {
         return;
     }
 
-    misCitas.forEach(cita => {
-        let mascotaTexto = cita.tipoMascota ? cita.tipoMascota : 'No especificada';
+    todasLasCitas.forEach((cita, indexGlobal) => {
+        const correoCita = cita.emailCliente || cita.email || '';
+        if (correoCita.toLowerCase() !== emailUsuario.toLowerCase()) return;
+
+        let mascotaTexto = cita.tipoMascota || 'No especificada';
         
         tbody.innerHTML += `
             <tr>
@@ -47,8 +45,19 @@ function cargarMisCitas(emailUsuario) {
                 <td><span class="badge bg-info text-dark">${mascotaTexto}</span></td>
                 <td>${cita.fecha}</td>
                 <td>${cita.hora}</td>
-                <td class="text-end"><span class="badge bg-success">Confirmada</span></td>
+                <td class="text-end">
+                    <button class="btn btn-outline-danger btn-sm py-0 px-2" onclick="cancelarMiCita(${indexGlobal})">Cancelar</button>
+                </td>
             </tr>
         `;
     });
 }
+
+window.cancelarMiCita = function(indexGlobal) {
+    if (confirm("¿Estás seguro de cancelar esta cita médica?")) {
+        let todasLasCitas = JSON.parse(localStorage.getItem('citas_vet')) || [];
+        todasLasCitas.splice(indexGlobal, 1);
+        localStorage.setItem('citas_vet', JSON.stringify(todasLasCitas));
+        location.reload();
+    }
+};
