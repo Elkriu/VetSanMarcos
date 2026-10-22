@@ -1,50 +1,53 @@
+import { useState } from "react";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import CardServicio from "../componentes/moleculas/CardServicio";
+import ListaInteres from "../componentes/organismos/ListaIntereses";
+import { servicios } from "../datos/servicios";
 
-const servicios = [
-    {
-        id: 1,
-        nombre: "Consulta General",
-        categoria: "Medicina General",
-        imagen: "/img/consulta.png",
-        resumen: "Revisión completa de la salud y estado físico de tu mascota.",
-        precio: "$20.000",
-    },
-    {
-        id: 2,
-        nombre: "Vacunación",
-        categoria: "Prevención",
-        imagen: "/img/vacunacion.webp",
-        resumen: "Esquemas de vacunación completos para proteger a tu mascota.",
-        precio: "$15.000",
-    },
-    {
-        id: 3,
-        nombre: "Cirugía Menor",
-        categoria: "Pabellón",
-        imagen: "/img/cirugia.png",
-        resumen: "Procedimientos quirúrgicos de baja complejidad con alta seguridad.",
-        precio: "Previa evaluación",
-    },
-    {
-        id: 4,
-        nombre: "Desparasitación",
-        categoria: "Prevención",
-        imagen: "/img/desparasitacion.png",
-        resumen: "Manejo y control de parásitos internos y externos.",
-        precio: "$10.000",
-    },
-    {
-        id: 5,
-        nombre: "Control de Peso",
-        categoria: "Nutrición",
-        imagen: "/img/control.avif",
-        resumen: "Evaluación nutricional y seguimiento para un peso ideal.",
-        precio: "Previa evaluación",
-    },
-];
+interface ItemLista {
+    id: number;
+    nombre: string;
+}
+
+const CLAVE = "listaInteresVeterinaria";
 
 function Servicios() {
+    const [lista, setLista] = useState<ItemLista[]>(() =>
+        JSON.parse(localStorage.getItem(CLAVE) ?? "[]")
+    );
+
+    const guardar = (nueva: ItemLista[]) => {
+        setLista(nueva);
+        localStorage.setItem(CLAVE, JSON.stringify(nueva));
+    };
+
+    const agregar = (id: number, nombre: string) => {
+        if (lista.some((item) => item.id === id)) {
+            alert("Este servicio ya está en tu lista.");
+            return;
+        }
+        guardar([...lista, { id, nombre }]);
+    };
+
+    const eliminar = (id: number) => {
+        guardar(lista.filter((item) => item.id !== id));
+    };
+
+    // Total estimado (misma lógica que actualizarPanelInteres)
+    const seleccionados = lista
+        .map((item) => servicios.find((s) => s.id === item.id))
+        .filter((s) => s !== undefined);
+
+    const total = seleccionados.reduce((suma, s) => suma + s.valorNumerico, 0);
+    const incluyeEvaluacion = seleccionados.some((s) => s.valorNumerico === 0);
+
+    let textoTotal = `$${total.toLocaleString("es-CL")}`;
+    if (incluyeEvaluacion && total === 0) {
+        textoTotal = "A evaluar en consulta";
+    } else if (incluyeEvaluacion) {
+        textoTotal += " (+ evaluaciones)";
+    }
+
     return (
         <section className="container">
             <EncabezadoSeccion
@@ -55,10 +58,12 @@ function Servicios() {
                 descripcion="Conoce las prestaciones disponibles para el cuidado preventivo y clínico de tu mascota."
             />
 
+            <ListaInteres items={lista} textoTotal={textoTotal} alEliminar={eliminar} />
+
             <div className="row g-4 justify-content-center">
                 {servicios.map((s) => (
                     <div className="col-md-6 col-lg-3" key={s.id}>
-                        <CardServicio {...s} />
+                        <CardServicio {...s} alAnadir={() => agregar(s.id, s.nombre)} />
                     </div>
                 ))}
             </div>

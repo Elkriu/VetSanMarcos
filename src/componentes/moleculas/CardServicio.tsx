@@ -1,3 +1,4 @@
+import Boton from "../atomos/Boton";
 import BotonEnlace from "../atomos/BotonEnlace";
 import Insignia from "../atomos/Insignia";
 
@@ -8,9 +9,10 @@ interface CardServicioProps {
     imagen: string;
     resumen: string;
     precio: string;
+    alAnadir: () => void;
 }
 
-function CardServicio({ id, nombre, categoria, imagen, resumen, precio }: CardServicioProps) {
+function CardServicio({ id, nombre, categoria, imagen, resumen, precio, alAnadir }: CardServicioProps) {
     return (
         <article className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden text-center">
             <img
@@ -27,13 +29,8 @@ function CardServicio({ id, nombre, categoria, imagen, resumen, precio }: CardSe
                 <p className="text-dark fw-semibold mb-3">{precio}</p>
 
                 <div className="mt-auto pt-3 d-flex flex-column gap-2 w-100">
-                    <BotonEnlace
-                        texto="Ver Detalles"
-                        a={`/servicios/${id}`}
-                        variante="outline-primary"
-                        tamano="sm"
-                        bloque
-                    />
+                    <Boton texto="+ Añadir a mi lista" variante="outline-success" tamano="sm" bloque alHacerClic={alAnadir} />
+                    <BotonEnlace texto="Ver Detalles" a={`/servicios/${id}`} variante="outline-primary" tamano="sm" bloque />
                 </div>
             </div>
         </article>
