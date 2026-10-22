@@ -1,18 +1,22 @@
 interface BotonProps {
     texto: string;
+    variante?: string;
+    tamano?: "sm" | "lg";
+    bloque?: boolean;
     tipo?: "button" | "submit";
-    variante?: string;        // primary, outline-danger, etc.
-    bloque?: boolean;         // ocupa todo el ancho
     alHacerClic?: () => void;
 }
 
-function Boton({ texto, tipo = "button", variante = "primary", bloque = false, alHacerClic }: BotonProps) {
+function Boton({ texto, variante = "primary", tamano, bloque = false, tipo = "button", alHacerClic }: BotonProps) {
+    const clases = [
+        "btn",
+        `btn-${variante}`,
+        tamano && `btn-${tamano}`,
+        bloque && "w-100",
+    ].filter(Boolean).join(" ");
+
     return (
-        <button
-            type={tipo}
-            className={`btn btn-${variante}${bloque ? " w-100" : ""}`}
-            onClick={alHacerClic}
-        >
+        <button type={tipo} className={clases} onClick={alHacerClic}>
             {texto}
         </button>
     );

@@ -2,8 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./componentes/organismos/Navbar";
 import Footer from "./componentes/organismos/Footer";
 import Inicio from "./paginas/Inicio";
-// import Servicios from "./paginas/Servicios";
-// import DetalleServicio from "./paginas/DetalleServicio";
+import Servicios from "./paginas/Servicios";
+import DetalleServicio from "./paginas/DetalleServicio";
 // import Nosotros from "./paginas/Nosotros";
 // import Novedades from "./paginas/Novedades";
 // import DetalleNoticia from "./paginas/DetalleNoticia";
@@ -23,9 +23,9 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Inicio />} />
 
-                    {/* <Route path="/servicios" element={<Servicios />} /> */}
-                    {/* <Route path="/servicios/:id" element={<DetalleServicio />} /> */}
-                    {/* <Route path="/nosotros" element={<Nosotros />} /> */}
+                    {<Route path="/servicios" element={<Servicios />} />}
+                    {<Route path="/servicios/:id" element={<DetalleServicio />} />}
+                    {/* <Route path="/nosotros" element={<Nosotros />} />}
                     {/* <Route path="/novedades" element={<Novedades />} /> */}
                     {/* <Route path="/novedades/:id" element={<DetalleNoticia />} /> */}
                     {/* <Route path="/contacto" element={<Contacto />} /> */}
