@@ -4,10 +4,10 @@ import Footer from "./componentes/organismos/Footer";
 import Inicio from "./paginas/Inicio";
 import Servicios from "./paginas/Servicios";
 import DetalleServicio from "./paginas/DetalleServicio";
-// import Nosotros from "./paginas/Nosotros";
+import Nosotros from "./paginas/Nosotros";
 // import Novedades from "./paginas/Novedades";
 // import DetalleNoticia from "./paginas/DetalleNoticia";
-// import Contacto from "./paginas/Contacto";
+import Contacto from "./paginas/Contacto";
 // import Agenda from "./paginas/Agenda";
 // import Login from "./paginas/Login";
 // import MisCitas from "./paginas/MisCitas";
@@ -25,10 +25,10 @@ function App() {
 
                     {<Route path="/servicios" element={<Servicios />} />}
                     {<Route path="/servicios/:id" element={<DetalleServicio />} />}
-                    {/* <Route path="/nosotros" element={<Nosotros />} />}
+                    {<Route path="/nosotros" element={<Nosotros />} />}
                     {/* <Route path="/novedades" element={<Novedades />} /> */}
                     {/* <Route path="/novedades/:id" element={<DetalleNoticia />} /> */}
-                    {/* <Route path="/contacto" element={<Contacto />} /> */}
+                    {<Route path="/contacto" element={<Contacto />} />}
                     {/* <Route path="/agenda" element={<Agenda />} /> */}
                     {/* <Route path="/login" element={<Login />} /> */}
                     {/* <Route path="/mis-citas" element={<MisCitas />} /> */}
