@@ -4,7 +4,7 @@ import Insignia from "../componentes/atomos/Insignia";
 function Nosotros() {
     return (
         <section className="container">
-            {/* SECCIÓN HISTORIA */}
+            
             <article className="row align-items-center g-5 mb-5">
                 <div className="col-lg-6">
                     <img
@@ -32,7 +32,7 @@ function Nosotros() {
                 </div>
             </article>
 
-            {/* SECCIÓN PILARES */}
+           
             <section className="text-center mb-5 pt-4">
                 <EncabezadoSeccion
                     titulo="Lo que nos"
@@ -82,7 +82,7 @@ function Nosotros() {
                 </div>
             </section>
 
-            {/* SECCIÓN EQUIPO MÉDICO */}
+            
             <section className="text-center pt-3">
                 <EncabezadoSeccion
                     titulo="Nuestro Equipo"
