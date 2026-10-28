@@ -4,6 +4,7 @@ import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import CampoSelect from "../componentes/moleculas/CampoSelect";
 import CardProducto from "../componentes/moleculas/CardProducto";
 import Boton from "../componentes/atomos/Boton";
+import { useCarrito } from "../contexto/useCarrito";
 import { productos, categorias, mascotas } from "../datos/productos";
 
 const ordenes = ["Relevancia", "Menor precio", "Mayor precio"];
@@ -15,6 +16,8 @@ function Tienda() {
     const [precioMax, setPrecioMax] = useState("");
     const [orden, setOrden] = useState("Relevancia");
 
+    const { agregar } = useCarrito();
+
     const limpiarFiltros = () => {
         setBusqueda("");
         setCategoria("Todas");
@@ -24,7 +27,7 @@ function Tienda() {
     };
 
     const texto = busqueda.trim().toLowerCase();
-    const maximo = precioMax.replace(/\D/g, ""); 
+    const maximo = precioMax.replace(/\D/g, "");   // deja solo los dígitos: "$10.000" → "10000"
 
     const filtrados = productos
         .filter((p) => p.nombre.toLowerCase().includes(texto))
@@ -35,6 +38,7 @@ function Tienda() {
             if (orden === "Menor precio") return a.precio - b.precio;
             if (orden === "Mayor precio") return b.precio - a.precio;
 
+            // Relevancia: con búsqueda, primero donde el texto aparece más al inicio del nombre
             if (texto) {
                 return a.nombre.toLowerCase().indexOf(texto) - b.nombre.toLowerCase().indexOf(texto);
             }
@@ -114,7 +118,7 @@ function Tienda() {
                 <div className="row g-4">
                     {filtrados.map((p) => (
                         <div className="col-sm-6 col-lg-3" key={p.id}>
-                            <CardProducto {...p} />
+                            <CardProducto {...p} alAnadir={() => agregar(p.id)} />
                         </div>
                     ))}
                 </div>

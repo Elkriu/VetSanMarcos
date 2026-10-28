@@ -4,13 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./estilos.css";
 import App from "./App.tsx";
 import AuthProvider from "./contexto/AuthProvider.tsx";
+import CarritoProvider from "./contexto/CarritoProvider.tsx";
 import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <BrowserRouter>
             <AuthProvider>
-                <App />
+                <CarritoProvider>
+                    <App />
+                </CarritoProvider>
             </AuthProvider>
         </BrowserRouter>
     </StrictMode>,

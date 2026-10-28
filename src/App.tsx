@@ -15,6 +15,7 @@ import Tienda from "./paginas/Tienda";
 import MisCitas from "./paginas/MisCitas";
 import Admin from "./paginas/Admin";
 import Recepcion from "./paginas/Recepcion";
+import Carrito from "./paginas/Carrito";
 
 
 const RUTAS_PANEL = ["/admin", "/recepcion", "/mis-citas"];
@@ -37,6 +38,7 @@ function App() {
                     { <Route path="/novedades" element={<Novedades />} />}
                     {<Route path="/novedades/:id" element={<DetalleNoticia />} /> }
                     {<Route path="/contacto" element={<Contacto />} />}
+                    {<Route path="/carrito" element={<Carrito />} />}
                     {<Route path="/agenda" element={<Agenda />} />}
                     {<Route path="/login" element={<Login />} />}
                     {<Route path="/tienda" element={<Tienda />} />}
