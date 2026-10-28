@@ -90,9 +90,12 @@ function Boleta() {
                         </p>
                     </div>
 
-                    <div className="d-flex justify-content-center gap-2 mt-4 no-imprimir">
+                    <div className="d-flex justify-content-center flex-wrap gap-2 mt-4 no-imprimir">
                         <Boton texto="🖨️ Imprimir boleta" alHacerClic={() => window.print()} />
                         <BotonEnlace texto="Seguir comprando" a="/tienda" variante="outline-primary" />
+                        {sesion?.rol === "Cliente" && (
+                            <BotonEnlace texto="← Volver a mis compras" a="/mis-citas" variante="outline-secondary" />
+                        )}
                     </div>
                 </article>
             </div>

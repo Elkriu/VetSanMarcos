@@ -2,8 +2,11 @@ import { useState } from "react";
 import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
+import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
 import { obtenerCitas, guardarCitas, correoDeCita, ordenarPorFecha } from "../datos/citas";
+import { buscarBoletasDeCliente } from "../datos/boletas";
+import { formatoPeso } from "../utils/formato";
 
 function MisCitas() {
     const { sesion } = useAuth();
@@ -11,6 +14,7 @@ function MisCitas() {
 
     const correo = sesion?.email.toLowerCase() ?? "";
     const misCitas = ordenarPorFecha(citas.filter((c) => correoDeCita(c).toLowerCase() === correo));
+    const misCompras = buscarBoletasDeCliente(correo);
 
     const cancelar = (id: string) => {
         if (!confirm("¿Estás seguro de cancelar esta cita médica?")) return;
@@ -61,6 +65,56 @@ function MisCitas() {
                                             >
                                                 Cancelar
                                             </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </TarjetaPanel>
+
+            <TarjetaPanel
+                borde="primary"
+                titulo="🧾 Historial de compras"
+                derecha={<BotonEnlace texto="Ir a la tienda" a="/tienda" variante="outline-primary" tamano="sm" />}
+            >
+                <div className="table-responsive">
+                    <table className="table align-middle mb-0">
+                        <thead className="table-light">
+                            <tr>
+                                <th>N° Boleta</th>
+                                <th>Fecha</th>
+                                <th>Detalle</th>
+                                <th className="text-end">Total</th>
+                                <th className="text-end">Boleta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {misCompras.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-muted py-4">
+                                        Aún no tienes compras registradas.
+                                    </td>
+                                </tr>
+                            ) : (
+                                misCompras.map((b) => (
+                                    <tr key={b.numero}>
+                                        <td><span className="fw-semibold text-primary">N° {b.numero}</span></td>
+                                        <td>{b.fecha}</td>
+                                        <td>
+                                            <small className="text-muted">
+                                                {b.lineas.map((l) => `${l.cantidad} × ${l.nombre}`).join(", ")}
+                                            </small>
+                                        </td>
+                                        <td className="text-end fw-semibold">{formatoPeso(b.total)}</td>
+                                        <td className="text-end">
+                                            <BotonEnlace
+                                                texto="🖨️ Ver / Reimprimir"
+                                                a={`/boleta/${b.numero}`}
+                                                variante="outline-primary"
+                                                tamano="sm"
+                                            />
                                         </td>
                                     </tr>
                                 ))
