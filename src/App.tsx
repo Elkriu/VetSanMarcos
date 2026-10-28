@@ -18,7 +18,6 @@ import Recepcion from "./paginas/Recepcion";
 import Carrito from "./paginas/Carrito";
 import Pago from "./paginas/Pago";
 import Boleta from "./paginas/Boleta";
-import Inventario from "./paginas/Inventario";
 
 
 const RUTAS_PANEL = ["/admin", "/recepcion", "/mis-citas"];
@@ -35,22 +34,21 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Inicio />} />
 
-                    {<Route path="/servicios" element={<Servicios />} />}
-                    {<Route path="/servicios/:id" element={<DetalleServicio />} />}
-                    {<Route path="/nosotros" element={<Nosotros />} />}
-                    { <Route path="/novedades" element={<Novedades />} />}
-                    {<Route path="/novedades/:id" element={<DetalleNoticia />} /> }
-                    {<Route path="/contacto" element={<Contacto />} />}
-                    {<Route path="/carrito" element={<Carrito />} />}
-                    {<Route path="/agenda" element={<Agenda />} />}
-                    {<Route path="/login" element={<Login />} />}
-                    {<Route path="/tienda" element={<Tienda />} />}
-                    {<Route path="/mis-citas" element={<RutaProtegida><MisCitas /></RutaProtegida>} />}
-                    {<Route path="/admin" element={<RutaProtegida roles={["Administrador"]}><Admin /></RutaProtegida>} />}
-                    {<Route path="/recepcion" element={<RutaProtegida roles={["Recepcionista", "Administrador"]}><Recepcion /></RutaProtegida>} />}
-                    {<Route path="/pago" element={<Pago />} />}
-                    {<Route path="/boleta/:numero" element={<Boleta />} />}
-                    {<Route path="/inventario" element={<Inventario />} />}
+                    <Route path="/servicios" element={<Servicios />} />
+                    <Route path="/servicios/:id" element={<DetalleServicio />} />
+                    <Route path="/nosotros" element={<Nosotros />} />
+                     <Route path="/novedades" element={<Novedades />} />
+                    <Route path="/novedades/:id" element={<DetalleNoticia />} /> 
+                    <Route path="/contacto" element={<Contacto />} />
+                    <Route path="/carrito" element={<Carrito />} />
+                    <Route path="/agenda" element={<Agenda />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/tienda" element={<Tienda />} />
+                    <Route path="/mis-citas" element={<RutaProtegida><MisCitas /></RutaProtegida>} />
+                    <Route path="/admin" element={<RutaProtegida roles={["Administrador"]}><Admin /></RutaProtegida>} />
+                    <Route path="/recepcion" element={<RutaProtegida roles={["Recepcionista", "Administrador"]}><Recepcion /></RutaProtegida>} />
+                    <Route path="/pago" element={<Pago />} />
+                    <Route path="/boleta/:numero" element={<Boleta />} />
                 </Routes>
             </main>
 
