@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import CampoSelect from "../componentes/moleculas/CampoSelect";
 import CardProducto from "../componentes/moleculas/CardProducto";
+import NotificacionCarrito from "../componentes/moleculas/NotificacionCarrito";
 import Boton from "../componentes/atomos/Boton";
 import { useCarrito } from "../contexto/useCarrito";
 import { productos, categorias, mascotas } from "../datos/productos";
@@ -19,6 +20,19 @@ function Tienda() {
 
     const { agregar, items } = useCarrito();
     const [stock] = useState(obtenerStock);
+
+    // Notificación "producto añadido"
+    const [anadido, setAnadido] = useState("");
+    const temporizador = useRef<number | undefined>(undefined);
+
+    const anadirAlCarrito = (id: number, nombre: string) => {
+        agregar(id);
+        setAnadido(nombre);
+
+        // Si se añade otro producto antes de que se cierre, se reinicia el tiempo
+        window.clearTimeout(temporizador.current);
+        temporizador.current = window.setTimeout(() => setAnadido(""), 3000);
+    };
 
     const limpiarFiltros = () => {
         setBusqueda("");
@@ -124,12 +138,14 @@ function Tienda() {
                                 {...p}
                                 stock={stock[p.id] ?? 0}
                                 enCarrito={items.find((i) => i.id === p.id)?.cantidad ?? 0}
-                                alAnadir={() => agregar(p.id)}
+                                alAnadir={() => anadirAlCarrito(p.id, p.nombre)}
                             />
                         </div>
                     ))}
                 </div>
             )}
+
+            <NotificacionCarrito nombreProducto={anadido} alCerrar={() => setAnadido("")} />
         </section>
     );
 }

@@ -6,6 +6,7 @@ import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import CampoSelect from "../componentes/moleculas/CampoSelect";
 import Boton from "../componentes/atomos/Boton";
 import Modal from "../componentes/organismos/Modal";
+import SeccionInventario from "../componentes/organismos/SeccionInventario";
 import { obtenerUsuarios, guardarUsuarios, type Rol, type Usuario } from "../datos/usuarios";
 import { obtenerCitas, guardarCitas, correoDeCita, ordenarPorFecha } from "../datos/citas";
 import { validarSoloLetras, validarCorreo, validarPassword, obtenerError } from "../utils/validaciones";
@@ -225,6 +226,8 @@ function Admin() {
                     </table>
                 </div>
             </TarjetaPanel>
+
+            <SeccionInventario />
 
             <Modal
                 abierto={modal !== null}

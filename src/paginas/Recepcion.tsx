@@ -4,6 +4,7 @@ import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
 import Boton from "../componentes/atomos/Boton";
 import Modal from "../componentes/organismos/Modal";
+import SeccionInventario from "../componentes/organismos/SeccionInventario";
 import { obtenerUsuarios } from "../datos/usuarios";
 import { obtenerMensajes } from "../datos/mensajes";
 import { servicios } from "../datos/servicios";
@@ -376,6 +377,8 @@ function Recepcion() {
                     </table>
                 </div>
             </TarjetaPanel>
+
+            <SeccionInventario />
 
             <Modal abierto={citaEditada !== null} titulo="Modificar cita" alCerrar={() => setCitaEditada(null)}>
                 {citaEditada && (
