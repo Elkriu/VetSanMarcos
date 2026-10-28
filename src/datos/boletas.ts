@@ -59,3 +59,10 @@ export const guardarBoleta = (datos: NuevaBoleta): Boleta => {
 
     return nuevaBoleta;
 };
+
+export const buscarBoletasDeCliente = (email: string): Boleta[] => {
+    const correo = email.toLowerCase();
+    return boletasDB
+        .filter((b) => b.clienteEmail.toLowerCase() === correo)
+        .sort((a, b) => b.numero - a.numero);
+};
