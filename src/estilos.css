@@ -65,3 +65,19 @@ html {
     color: #a855f7 !important;
     font-weight: 600;
 }
+
+/* ================= IMPRESIÓN (BOLETA) ================= */
+@media print {
+    header, footer, .no-imprimir {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+}

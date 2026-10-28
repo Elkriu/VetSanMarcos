@@ -33,3 +33,39 @@ export class PasswordInvalidaError extends ValidacionError {
         this.name = "PasswordInvalidaError";
     }
 }
+
+export class TarjetaInvalidaError extends ValidacionError {
+    constructor() {
+        super("El número de tarjeta debe tener 16 dígitos.");
+        this.name = "TarjetaInvalidaError";
+    }
+}
+
+export class VencimientoInvalidoError extends ValidacionError {
+    constructor() {
+        super("Ingrese el vencimiento en formato MM/AA (ej: 08/28).");
+        this.name = "VencimientoInvalidoError";
+    }
+}
+
+export class TarjetaVencidaError extends ValidacionError {
+    constructor() {
+        super("La tarjeta se encuentra vencida.");
+        this.name = "TarjetaVencidaError";
+    }
+}
+
+export class CvvInvalidoError extends ValidacionError {
+    constructor() {
+        super("El CVV debe tener 3 dígitos.");
+        this.name = "CvvInvalidoError";
+    }
+}
+
+// No es un error de validación del formulario: lo "responde el banco"
+export class PagoRechazadoError extends Error {
+    constructor() {
+        super("Pago rechazado por el banco emisor. Intenta con otra tarjeta.");
+        this.name = "PagoRechazadoError";
+    }
+}

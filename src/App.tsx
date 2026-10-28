@@ -16,6 +16,8 @@ import MisCitas from "./paginas/MisCitas";
 import Admin from "./paginas/Admin";
 import Recepcion from "./paginas/Recepcion";
 import Carrito from "./paginas/Carrito";
+import Pago from "./paginas/Pago";
+import Boleta from "./paginas/Boleta";
 
 
 const RUTAS_PANEL = ["/admin", "/recepcion", "/mis-citas"];
@@ -45,6 +47,8 @@ function App() {
                     {<Route path="/mis-citas" element={<RutaProtegida><MisCitas /></RutaProtegida>} />}
                     {<Route path="/admin" element={<RutaProtegida roles={["Administrador"]}><Admin /></RutaProtegida>} />}
                     {<Route path="/recepcion" element={<RutaProtegida roles={["Recepcionista", "Administrador"]}><Recepcion /></RutaProtegida>} />}
+                    {<Route path="/pago" element={<Pago />} />}
+                    {<Route path="/boleta/:numero" element={<Boleta />} />}
                 </Routes>
             </main>
 

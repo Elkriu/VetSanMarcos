@@ -3,9 +3,12 @@ import {
     RunInvalidoError,
     NombreInvalidoError,
     EmailInvalidoError,
-    PasswordInvalidaError
+    PasswordInvalidaError,
+    TarjetaInvalidaError,
+    VencimientoInvalidoError,
+    TarjetaVencidaError,
+    CvvInvalidoError,
 } from "./excepciones";
-
 export const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|sanmarcos)\.(com|cl)$/;
 export const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
 export const rxRun = /^[0-9]{7,8}[0-9kK]$/;
@@ -42,5 +45,37 @@ export const obtenerError = (validar: () => void): string | undefined => {
     } catch (error) {
         if (error instanceof ValidacionError) return error.message;
         throw error;
+    }
+};
+
+export const rxTarjeta = /^\d{16}$/;
+export const rxVencimiento = /^(0[1-9]|1[0-2])\/(\d{2})$/;
+export const rxCvv = /^\d{3}$/;
+
+export const validarTarjeta = (numero: string): void => {
+    if (!rxTarjeta.test(numero.replace(/\s/g, ""))) {
+        throw new TarjetaInvalidaError();
+    }
+};
+
+export const validarVencimiento = (vencimiento: string): void => {
+    const partes = rxVencimiento.exec(vencimiento.trim());
+    if (!partes) {
+        throw new VencimientoInvalidoError();
+    }
+
+    const mes = Number(partes[1]);
+    const anio = 2000 + Number(partes[2]);
+    const hoy = new Date();
+
+    // La tarjeta sirve hasta el último día del mes indicado
+    if (anio < hoy.getFullYear() || (anio === hoy.getFullYear() && mes < hoy.getMonth() + 1)) {
+        throw new TarjetaVencidaError();
+    }
+};
+
+export const validarCvv = (cvv: string): void => {
+    if (!rxCvv.test(cvv.trim())) {
+        throw new CvvInvalidoError();
     }
 };
