@@ -1,11 +1,11 @@
 import {
+    ValidacionError,
     RunInvalidoError,
     NombreInvalidoError,
     EmailInvalidoError,
     PasswordInvalidaError
 } from "./excepciones";
 
-// RegEx exactos extraídos de tu validaciones.js
 export const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|sanmarcos)\.(com|cl)$/;
 export const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
 export const rxRun = /^[0-9]{7,8}[0-9kK]$/;
@@ -32,5 +32,15 @@ export const validarCorreo = (email: string): void => {
 export const validarPassword = (password: string): void => {
     if (!rxPass.test(password)) {
         throw new PasswordInvalidaError();
+    }
+};
+
+export const obtenerError = (validar: () => void): string | undefined => {
+    try {
+        validar();
+        return undefined;
+    } catch (error) {
+        if (error instanceof ValidacionError) return error.message;
+        throw error;
     }
 };

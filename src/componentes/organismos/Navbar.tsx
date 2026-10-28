@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import BotonEnlace from "../atomos/BotonEnlace";
+import Boton from "../atomos/Boton";
+import { useAuth } from "../../contexto/useAuth";
 
 const enlaces = [
     { a: "/", texto: "Inicio" },
@@ -13,6 +15,13 @@ const enlaces = [
 
 function Navbar() {
     const [abierto, setAbierto] = useState(false);
+    const { sesion, cerrarSesion } = useAuth();
+    const panel =
+        sesion?.rol === "Administrador"
+            ? { a: "/admin", texto: "Panel Admin" }
+            : sesion?.rol === "Recepcionista"
+            ? { a: "/recepcion", texto: "Panel Recepción" }
+            : { a: "/mis-citas", texto: "Mis Citas" };
 
     return (
         <header>
@@ -48,8 +57,29 @@ function Navbar() {
                                     </NavLink>
                                 </li>
                             ))}
+
                             <li className="nav-item ms-lg-2">
-                                <BotonEnlace texto="Iniciar Sesión" a="/login" tamano="sm" />
+                                {sesion ? (
+                                    <div className="d-flex align-items-center gap-2 flex-wrap">
+                                        <span className="small fw-semibold text-dark">
+                                            👤 {sesion.nombre.split(" ")[0]}
+                                        </span>
+                                        <BotonEnlace
+                                            texto={panel.texto}
+                                            a={panel.a}
+                                            variante="outline-primary"
+                                            tamano="sm"
+                                        />
+                                        <Boton
+                                            texto="Salir"
+                                            variante="outline-danger"
+                                            tamano="sm"
+                                            alHacerClic={cerrarSesion}
+                                        />
+                                    </div>
+                                ) : (
+                                    <BotonEnlace texto="Iniciar Sesión" a="/login" tamano="sm" />
+                                )}
                             </li>
                         </ul>
                     </div>
