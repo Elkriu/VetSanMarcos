@@ -21,8 +21,6 @@ const PIES: Record<TipoPanel, string | null> = {
     cliente: null,
 };
 
-// Estructura propia de los paneles: barra superior según el rol, contenido y pie.
-// Reemplaza al Navbar/Footer del sitio público en estas páginas.
 function LayoutPanel({ tipo, children }: LayoutPanelProps) {
     const { sesion, cerrarSesion } = useAuth();
     const esCliente = tipo === "cliente";
@@ -35,9 +33,9 @@ function LayoutPanel({ tipo, children }: LayoutPanelProps) {
                 style={esCliente ? undefined : { backgroundColor: "#e9ecef" }}
             >
                 <div className="container d-flex justify-content-between align-items-center flex-wrap gap-2 py-2">
-                    <span className={`fw-bold fs-5 ${esCliente ? "text-white" : "text-primary"}`}>
+                    <Link to="/" className={`text-decoration-none fw-bold fs-5 ${esCliente ? "text-white" : "text-primary"}`}>
                         {MARCAS[tipo]}
-                    </span>
+                    </Link>
 
                     {esCliente ? (
                         <div className="d-flex align-items-center flex-wrap gap-2">
