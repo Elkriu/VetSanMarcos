@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import BotonEnlace from "../atomos/BotonEnlace";
 import Boton from "../atomos/Boton";
 import { useAuth } from "../../contexto/useAuth";
+import { useCarrito } from "../../contexto/useCarrito";
 
 const enlaces = [
     { a: "/", texto: "Inicio" },
@@ -17,6 +18,9 @@ const enlaces = [
 function Navbar() {
     const [abierto, setAbierto] = useState(false);
     const { sesion, cerrarSesion } = useAuth();
+    const { cantidadTotal } = useCarrito();
+
+    // Botón del panel según el rol (igual que en auth-nav.js)
     const panel =
         sesion?.rol === "Administrador"
             ? { a: "/admin", texto: "Panel Admin" }
@@ -60,6 +64,19 @@ function Navbar() {
                             ))}
 
                             <li className="nav-item ms-lg-2">
+                                <Link
+                                    to="/carrito"
+                                    className="btn btn-outline-primary btn-sm"
+                                    onClick={() => setAbierto(false)}
+                                >
+                                    🛒 Carrito
+                                    {cantidadTotal > 0 && (
+                                        <span className="badge rounded-pill bg-danger ms-1">{cantidadTotal}</span>
+                                    )}
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
                                 {sesion ? (
                                     <div className="d-flex align-items-center gap-2 flex-wrap">
                                         <span className="small fw-semibold text-dark">
