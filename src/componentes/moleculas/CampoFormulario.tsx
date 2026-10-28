@@ -3,21 +3,22 @@ import Input from "../atomos/Input";
 interface CampoFormularioProps {
     etiqueta: string;
     id: string;
-    tipo?: "text" | "email" | "password" | "number";
+    tipo?: "text" | "email" | "password" | "number" | "date";
     valor: string;
     alCambiar: (valor: string) => void;
     placeholder?: string;
-    ayuda?: string;                      // texto pequeño bajo el campo
-    error?: string;                      // mensaje de error bajo el campo
-    estado?: "valido" | "invalido";      // borde verde o rojo
+    ayuda?: string;                      
+    error?: string;                      
+    estado?: "valido" | "invalido";      
     soloLectura?: boolean;
     requerido?: boolean;
-    espacio?: 3 | 4;                     // mb-3 o mb-4  
+    min?: string;                        
+    espacio?: 3 | 4;                     
 }
 
 function CampoFormulario({
     etiqueta, id, tipo = "text", valor, alCambiar, placeholder, ayuda, error, estado,
-    soloLectura = false, requerido = false, espacio = 3,
+    soloLectura = false, requerido = false, min, espacio = 3,
 }: CampoFormularioProps) {
     return (
         <div className={`mb-${espacio}`}>
@@ -34,6 +35,7 @@ function CampoFormulario({
                 soloLectura={soloLectura}
                 requerido={requerido}
                 estado={estado}
+                min={min}
             />
 
             {error && <div className="invalid-feedback">{error}</div>}

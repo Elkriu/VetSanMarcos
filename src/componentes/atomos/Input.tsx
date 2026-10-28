@@ -7,9 +7,10 @@ interface InputProps {
     soloLectura?: boolean;
     requerido?: boolean;
     estado?: "valido" | "invalido";
+    min?: string;           
 }
 
-function Input({ id, tipo = "text", valor, alCambiar, placeholder, soloLectura = false, requerido = false, estado }: InputProps) {
+function Input({ id, tipo = "text", valor, alCambiar, placeholder, soloLectura = false, requerido = false, estado, min }: InputProps) {
     const claseEstado = estado === "invalido" ? " is-invalid" : estado === "valido" ? " is-valid" : "";
 
     return (
@@ -22,6 +23,7 @@ function Input({ id, tipo = "text", valor, alCambiar, placeholder, soloLectura =
             onChange={(e) => alCambiar(e.target.value)}
             readOnly={soloLectura}
             required={requerido}
+            min={min}
         />
     );
 }
