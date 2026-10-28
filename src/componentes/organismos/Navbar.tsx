@@ -7,6 +7,7 @@ import { useAuth } from "../../contexto/useAuth";
 const enlaces = [
     { a: "/", texto: "Inicio" },
     { a: "/servicios", texto: "Servicios" },
+    { a: "/tienda", texto: "Tienda" },
     { a: "/nosotros", texto: "Nosotros" },
     { a: "/novedades", texto: "Novedades" },
     { a: "/contacto", texto: "Contacto" },

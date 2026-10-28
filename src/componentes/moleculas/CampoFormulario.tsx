@@ -3,7 +3,7 @@ import Input from "../atomos/Input";
 interface CampoFormularioProps {
     etiqueta: string;
     id: string;
-    tipo?: "text" | "email" | "password";
+    tipo?: "text" | "email" | "password" | "number";
     valor: string;
     alCambiar: (valor: string) => void;
     placeholder?: string;
@@ -12,7 +12,7 @@ interface CampoFormularioProps {
     estado?: "valido" | "invalido";      // borde verde o rojo
     soloLectura?: boolean;
     requerido?: boolean;
-    espacio?: 3 | 4;                     // mb-3 o mb-4
+    espacio?: 3 | 4;                     // mb-3 o mb-4  
 }
 
 function CampoFormulario({

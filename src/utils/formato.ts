@@ -1,0 +1,1 @@
+export const formatoPeso = (valor: number): string => `$${valor.toLocaleString("es-CL")}`;
