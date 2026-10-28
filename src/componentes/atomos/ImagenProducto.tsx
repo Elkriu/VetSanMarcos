@@ -1,34 +1,29 @@
-import { useState } from "react";
-
 interface ImagenProductoProps {
     src: string;
     alt: string;
-    emoji: string;        // respaldo si la foto no existe
-    alto?: number;        // alto en px
+    emoji: string;
 }
 
-function ImagenProducto({ src, alt, emoji, alto = 180 }: ImagenProductoProps) {
-    const [fallo, setFallo] = useState(false);
-
-    if (fallo) {
-        return (
-            <div
-                className="bg-light d-flex align-items-center justify-content-center w-100"
-                style={{ height: `${alto}px`, fontSize: `${alto / 3}px` }}
+function ImagenProducto({ src, alt, emoji }: ImagenProductoProps) {
+    return (
+        <div 
+            className="position-relative bg-white w-100 border-bottom" 
+            style={{ height: "220px", padding: "1rem" }}
+        >
+            <img
+                src={src}
+                alt={alt}
+                className="w-100 h-100"
+                style={{ objectFit: "contain" }}
+            />
+            <span 
+                className="position-absolute top-0 end-0 m-2 fs-3 bg-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                style={{ width: "40px", height: "40px" }}
+                title="Categoría"
             >
                 {emoji}
-            </div>
-        );
-    }
-
-    return (
-        <img
-            src={src}
-            alt={alt}
-            className="w-100"
-            style={{ height: `${alto}px`, objectFit: "cover", display: "block" }}
-            onError={() => setFallo(true)}
-        />
+            </span>
+        </div>
     );
 }
 
