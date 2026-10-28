@@ -1,6 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./componentes/organismos/Navbar";
 import Footer from "./componentes/organismos/Footer";
+import RutaProtegida from "./componentes/organismos/RutaProtegida";
 import Inicio from "./paginas/Inicio";
 import Servicios from "./paginas/Servicios";
 import DetalleServicio from "./paginas/DetalleServicio";
@@ -11,16 +12,22 @@ import Contacto from "./paginas/Contacto";
 import Agenda from "./paginas/Agenda";
 import Login from "./paginas/Login";
 import Tienda from "./paginas/Tienda";
-// import MisCitas from "./paginas/MisCitas";
-// import Admin from "./paginas/Admin";
-// import Recepcion from "./paginas/Recepcion";
+import MisCitas from "./paginas/MisCitas";
+import Admin from "./paginas/Admin";
+import Recepcion from "./paginas/Recepcion";
+
+
+const RUTAS_PANEL = ["/admin", "/recepcion", "/mis-citas"];
 
 function App() {
+    const { pathname } = useLocation();
+    const esPanel = RUTAS_PANEL.includes(pathname);
+
     return (
         <div className="d-flex flex-column min-vh-100">
-            <Navbar />
+            {!esPanel && <Navbar />}
 
-            <main className="flex-grow-1 py-5">
+            <main className={esPanel ? "flex-grow-1" : "flex-grow-1 py-5"}>
                 <Routes>
                     <Route path="/" element={<Inicio />} />
 
@@ -33,13 +40,13 @@ function App() {
                     {<Route path="/agenda" element={<Agenda />} />}
                     {<Route path="/login" element={<Login />} />}
                     {<Route path="/tienda" element={<Tienda />} />}
-                    {/* <Route path="/mis-citas" element={<MisCitas />} /> */}
-                    {/* <Route path="/admin" element={<Admin />} /> */}
-                    {/* <Route path="/recepcion" element={<Recepcion />} /> */}
+                    {<Route path="/mis-citas" element={<RutaProtegida><MisCitas /></RutaProtegida>} />}
+                    {<Route path="/admin" element={<RutaProtegida roles={["Administrador"]}><Admin /></RutaProtegida>} />}
+                    {<Route path="/recepcion" element={<RutaProtegida roles={["Recepcionista", "Administrador"]}><Recepcion /></RutaProtegida>} />}
                 </Routes>
             </main>
 
-            <Footer />
+            {!esPanel && <Footer />}
         </div>
     );
 }

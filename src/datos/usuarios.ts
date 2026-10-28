@@ -9,7 +9,6 @@ export interface Usuario {
     suspendido: boolean;
 }
 
-// Lo único que se guarda en "sesion_activa" (sin la contraseña)
 export interface Sesion {
     email: string;
     nombre: string;
@@ -24,7 +23,6 @@ const USUARIOS_INICIALES: Usuario[] = [
     { email: "cristianv@gmail.com", password: "Cliente1!", rol: "Cliente", nombre: "Cristian Vega", suspendido: false },
 ];
 
-// Igual que el inicio de validaciones.js: si no hay usuarios guardados, siembra los iniciales
 export function obtenerUsuarios(): Usuario[] {
     const guardados = localStorage.getItem(CLAVE);
     if (guardados) return JSON.parse(guardados);
