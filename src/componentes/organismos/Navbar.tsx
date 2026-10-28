@@ -20,6 +20,10 @@ function Navbar() {
     const { sesion, cerrarSesion } = useAuth();
     const { cantidadTotal } = useCarrito();
 
+    // Solo el personal ve el enlace al inventario
+    const esPersonal = sesion?.rol === "Administrador" || sesion?.rol === "Recepcionista";
+    const menu = esPersonal ? [...enlaces, { a: "/inventario", texto: "Inventario" }] : enlaces;
+
     // Botón del panel según el rol (igual que en auth-nav.js)
     const panel =
         sesion?.rol === "Administrador"
@@ -48,7 +52,7 @@ function Navbar() {
 
                     <div className={`collapse navbar-collapse justify-content-end${abierto ? " show" : ""}`}>
                         <ul className="navbar-nav align-items-lg-center gap-2">
-                            {enlaces.map((enlace) => (
+                            {menu.map((enlace) => (
                                 <li className="nav-item" key={enlace.a}>
                                     <NavLink
                                         to={enlace.a}

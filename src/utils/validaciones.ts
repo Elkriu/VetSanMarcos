@@ -8,6 +8,7 @@ import {
     VencimientoInvalidoError,
     TarjetaVencidaError,
     CvvInvalidoError,
+    CantidadInvalidaError,
 } from "./excepciones";
 export const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|sanmarcos)\.(com|cl)$/;
 export const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
@@ -77,5 +78,13 @@ export const validarVencimiento = (vencimiento: string): void => {
 export const validarCvv = (cvv: string): void => {
     if (!rxCvv.test(cvv.trim())) {
         throw new CvvInvalidoError();
+    }
+};
+
+export const rxCantidad = /^[1-9]\d{0,2}$/;   // de 1 a 999
+
+export const validarCantidadStock = (cantidad: string): void => {
+    if (!rxCantidad.test(cantidad.trim())) {
+        throw new CantidadInvalidaError();
     }
 };

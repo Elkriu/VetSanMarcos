@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import FormularioPago from "../componentes/organismos/FormularioPago";
+import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
 import { useCarrito } from "../contexto/useCarrito";
 import { productos } from "../datos/productos";
 import { guardarBoleta } from "../datos/boletas";
+import { obtenerStock, descontarStock } from "../datos/stock";
 import { formatoPeso, desglosarIva } from "../utils/formato";
 
 function Pago() {
@@ -27,7 +29,24 @@ function Pago() {
     if (!sesion) return <Navigate to="/login" replace />;
     if (lineas.length === 0) return <Navigate to="/carrito" replace />;
 
+    // Se revisa el stock antes de dejar pagar
+    const stock = obtenerStock();
+    const sinStock = lineas.filter((l) => l.cantidad > (stock[l.producto.id] ?? 0));
+
+    if (sinStock.length > 0) {
+        return (
+            <div className="container text-center">
+                <div className="alert alert-warning" role="alert">
+                    Estos productos ya no tienen stock suficiente: {sinStock.map((l) => l.producto.nombre).join(", ")}.
+                </div>
+                <BotonEnlace texto="Volver al carrito" a="/carrito" />
+            </div>
+        );
+    }
+
     const alExito = (ultimosDigitos: string) => {
+        descontarStock(lineas.map((l) => ({ id: l.producto.id, cantidad: l.cantidad })));
+
         const boleta = guardarBoleta({
             clienteNombre: sesion.nombre,
             clienteEmail: sesion.email,

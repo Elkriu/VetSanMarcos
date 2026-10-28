@@ -69,3 +69,10 @@ export class PagoRechazadoError extends Error {
         this.name = "PagoRechazadoError";
     }
 }
+
+export class CantidadInvalidaError extends ValidacionError {
+    constructor() {
+        super("Ingrese una cantidad entera entre 1 y 999.");
+        this.name = "CantidadInvalidaError";
+    }
+}

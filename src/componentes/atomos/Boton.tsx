@@ -4,10 +4,11 @@ interface BotonProps {
     tamano?: "sm" | "lg";
     bloque?: boolean;
     tipo?: "button" | "submit";
+    deshabilitado?: boolean;
     alHacerClic?: () => void;
 }
 
-function Boton({ texto, variante = "primary", tamano, bloque = false, tipo = "button", alHacerClic }: BotonProps) {
+function Boton({ texto, variante = "primary", tamano, bloque = false, tipo = "button", deshabilitado = false, alHacerClic }: BotonProps) {
     const clases = [
         "btn",
         `btn-${variante}`,
@@ -16,7 +17,7 @@ function Boton({ texto, variante = "primary", tamano, bloque = false, tipo = "bu
     ].filter(Boolean).join(" ");
 
     return (
-        <button type={tipo} className={clases} onClick={alHacerClic}>
+        <button type={tipo} className={clases} onClick={alHacerClic} disabled={deshabilitado}>
             {texto}
         </button>
     );

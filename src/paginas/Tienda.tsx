@@ -6,6 +6,7 @@ import CardProducto from "../componentes/moleculas/CardProducto";
 import Boton from "../componentes/atomos/Boton";
 import { useCarrito } from "../contexto/useCarrito";
 import { productos, categorias, mascotas } from "../datos/productos";
+import { obtenerStock } from "../datos/stock";
 
 const ordenes = ["Relevancia", "Menor precio", "Mayor precio"];
 
@@ -16,7 +17,8 @@ function Tienda() {
     const [precioMax, setPrecioMax] = useState("");
     const [orden, setOrden] = useState("Relevancia");
 
-    const { agregar } = useCarrito();
+    const { agregar, items } = useCarrito();
+    const [stock] = useState(obtenerStock);
 
     const limpiarFiltros = () => {
         setBusqueda("");
@@ -118,7 +120,12 @@ function Tienda() {
                 <div className="row g-4">
                     {filtrados.map((p) => (
                         <div className="col-sm-6 col-lg-3" key={p.id}>
-                            <CardProducto {...p} alAnadir={() => agregar(p.id)} />
+                            <CardProducto
+                                {...p}
+                                stock={stock[p.id] ?? 0}
+                                enCarrito={items.find((i) => i.id === p.id)?.cantidad ?? 0}
+                                alAnadir={() => agregar(p.id)}
+                            />
                         </div>
                     ))}
                 </div>

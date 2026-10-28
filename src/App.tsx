@@ -18,6 +18,7 @@ import Recepcion from "./paginas/Recepcion";
 import Carrito from "./paginas/Carrito";
 import Pago from "./paginas/Pago";
 import Boleta from "./paginas/Boleta";
+import Inventario from "./paginas/Inventario";
 
 
 const RUTAS_PANEL = ["/admin", "/recepcion", "/mis-citas"];
@@ -49,6 +50,7 @@ function App() {
                     {<Route path="/recepcion" element={<RutaProtegida roles={["Recepcionista", "Administrador"]}><Recepcion /></RutaProtegida>} />}
                     {<Route path="/pago" element={<Pago />} />}
                     {<Route path="/boleta/:numero" element={<Boleta />} />}
+                    {<Route path="/inventario" element={<Inventario />} />}
                 </Routes>
             </main>
 
