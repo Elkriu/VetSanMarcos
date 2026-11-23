@@ -5,7 +5,12 @@ import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
 import Boton from "../componentes/atomos/Boton";
 import Modal from "../componentes/organismos/Modal";
 import { listarUsuarios, type Usuario } from "../datos/usuarios";
-import { obtenerMensajes } from "../datos/mensajes";
+import {
+    listarMensajesApi,
+    alternarLeidoMensajeApi,
+    eliminarMensajeApi,
+    type MensajeContacto,
+} from "../datos/mensajes";
 import { servicios } from "../datos/servicios";
 import { mascotas } from "../datos/productos";
 import { ApiError } from "../utils/api";
@@ -72,15 +77,31 @@ function SelectorFechaHora({
     );
 }
 
+function formatearFechaMensaje(iso: string): string {
+    try {
+        return new Date(iso).toLocaleString("es-CL", {
+            dateStyle: "short",
+            timeStyle: "short",
+        });
+    } catch {
+        return iso;
+    }
+}
+
 function Recepcion() {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
     const [errorUsuarios, setErrorUsuarios] = useState("");
-    const mensajes = obtenerMensajes();
+
+    const [mensajes, setMensajes] = useState<MensajeContacto[]>([]);
+    const [cargandoMensajes, setCargandoMensajes] = useState(true);
+    const [errorMensajes, setErrorMensajes] = useState("");
+
     const [citas, setCitas] = useState(obtenerCitas);
 
     useEffect(() => {
         let activo = true;
+
         listarUsuarios()
             .then((lista) => {
                 if (activo) setUsuarios(lista);
@@ -96,10 +117,44 @@ function Recepcion() {
                 if (activo) setCargandoUsuarios(false);
             });
 
+        listarMensajesApi()
+            .then((lista) => {
+                if (activo) setMensajes(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setErrorMensajes(
+                        err instanceof ApiError ? err.message : "No se pudieron cargar los mensajes de contacto."
+                    );
+                }
+            })
+            .finally(() => {
+                if (activo) setCargandoMensajes(false);
+            });
+
         return () => {
             activo = false;
         };
     }, []);
+
+    const manejarLeido = async (m: MensajeContacto) => {
+        try {
+            const actualizado = await alternarLeidoMensajeApi(m.id);
+            setMensajes((prev) => prev.map((x) => (x.id === m.id ? actualizado : x)));
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo actualizar el estado del mensaje.");
+        }
+    };
+
+    const manejarEliminarMensaje = async (m: MensajeContacto) => {
+        if (!confirm(`¿Eliminar el mensaje de ${m.nombre}?`)) return;
+        try {
+            await eliminarMensajeApi(m.id);
+            setMensajes((prev) => prev.filter((x) => x.id !== m.id));
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo eliminar el mensaje.");
+        }
+    };
 
     const actualizarCitas = (nuevas: Cita[]) => {
         guardarCitas(nuevas);
@@ -333,24 +388,61 @@ function Recepcion() {
                                 <th>Nombre</th>
                                 <th>Correo electrónico</th>
                                 <th>Comentario / Mensaje</th>
+                                <th>Estado</th>
+                                <th className="text-end">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {mensajes.length === 0 ? (
+                            {cargandoMensajes ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center text-muted py-3">
+                                    <td colSpan={6} className="text-center text-muted py-3">
+                                        Cargando mensajes...
+                                    </td>
+                                </tr>
+                            ) : errorMensajes ? (
+                                <tr>
+                                    <td colSpan={6} className="text-center text-danger py-3">
+                                        {errorMensajes}
+                                    </td>
+                                </tr>
+                            ) : mensajes.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="text-center text-muted py-3">
                                         No hay mensajes de contacto nuevos.
                                     </td>
                                 </tr>
                             ) : (
-                                mensajes.map((m, i) => (
-                                    <tr key={i}>
-                                        <td><small className="text-muted">{m.fecha}</small></td>
+                                mensajes.map((m) => (
+                                    <tr key={m.id}>
+                                        <td><small className="text-muted">{formatearFechaMensaje(m.fechaEnvio)}</small></td>
                                         <td className="fw-semibold">{m.nombre}</td>
                                         <td>
                                             <a href={`mailto:${m.email}`} className="text-decoration-none">{m.email}</a>
                                         </td>
                                         <td><span className="text-secondary">{m.comentario}</span></td>
+                                        <td>
+                                            {m.leido ? (
+                                                <span className="badge bg-success">Leído</span>
+                                            ) : (
+                                                <span className="badge bg-warning text-dark">Pendiente</span>
+                                            )}
+                                        </td>
+                                        <td className="text-end text-nowrap">
+                                            <button
+                                                type="button"
+                                                className={`btn btn-sm py-0 px-2 me-1 ${m.leido ? "btn-outline-secondary" : "btn-outline-success"}`}
+                                                onClick={() => manejarLeido(m)}
+                                            >
+                                                {m.leido ? "No leído" : "Marcar leído"}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-danger btn-sm py-0 px-2"
+                                                onClick={() => manejarEliminarMensaje(m)}
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             )}
