@@ -27,7 +27,7 @@ function MisCitas() {
     return (
         <LayoutPanel tipo="cliente">
             <EncabezadoPanel
-                titulo="Mis Citas Médicas Agendadas"
+                titulo="Mi Cuenta y Actividad"
                 descripcion="Aquí puedes revisar el historial y estado exclusivo de las reservas asociadas a tu cuenta personal."
             />
 

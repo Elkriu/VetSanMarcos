@@ -26,7 +26,7 @@ function Navbar() {
             ? { a: "/admin", texto: "Panel Admin" }
             : sesion?.rol === "Recepcionista"
             ? { a: "/recepcion", texto: "Panel Recepción" }
-            : { a: "/mis-citas", texto: "Mis Citas" };
+            : { a: "/mis-citas", texto: "Mi Cuenta" };
 
     return (
         <header>
