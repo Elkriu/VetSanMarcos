@@ -9,7 +9,9 @@ import {
     TarjetaVencidaError,
     CvvInvalidoError,
     CantidadInvalidaError,
+    ComentarioInvalidoError,
 } from "./excepciones";
+
 export const rxCorreo = /^[a-zA-Z0-9_.+-]+@(gmail|outlook|hotmail|yahoo|sanmarcos)\.(com|cl)$/;
 export const rxPass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,10}$/;
 export const rxRun = /^[0-9]{7,8}[0-9kK]$/;
@@ -36,6 +38,13 @@ export const validarCorreo = (email: string): void => {
 export const validarPassword = (password: string): void => {
     if (!rxPass.test(password)) {
         throw new PasswordInvalidaError();
+    }
+};
+
+export const validarComentario = (comentario: string): void => {
+    const limpio = comentario.trim();
+    if (limpio.length < 5 || limpio.length > 500) {
+        throw new ComentarioInvalidoError();
     }
 };
 

@@ -76,3 +76,10 @@ export class CantidadInvalidaError extends ValidacionError {
         this.name = "CantidadInvalidaError";
     }
 }
+
+export class ComentarioInvalidoError extends ValidacionError {
+    constructor() {
+        super("El mensaje debe tener entre 5 y 500 caracteres.");
+        this.name = "ComentarioInvalidoError";
+    }
+}
