@@ -1,7 +1,8 @@
 import { useState, type SubmitEvent } from "react";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import Boton from "../atomos/Boton";
-import { obtenerUsuarios, guardarUsuarios } from "../../datos/usuarios";
+import { registrarClienteApi } from "../../datos/usuarios";
+import { ApiError } from "../../utils/api";
 import {
     validarRun,
     validarSoloLetras,
@@ -14,7 +15,7 @@ type Campo = "run" | "nombre" | "apellido" | "email" | "password";
 type Errores = Partial<Record<Campo, string>>;
 
 interface FormularioRegistroProps {
-    alTerminar: () => void;     
+    alTerminar: () => void;
 }
 
 function FormularioRegistro({ alTerminar }: FormularioRegistroProps) {
@@ -25,14 +26,15 @@ function FormularioRegistro({ alTerminar }: FormularioRegistroProps) {
     const [password, setPassword] = useState("");
 
     const [errores, setErrores] = useState<Errores>({});
-    const [validado, setValidado] = useState(false);   
+    const [validado, setValidado] = useState(false);
+    const [enviando, setEnviando] = useState(false);
 
     const estado = (campo: Campo): "valido" | "invalido" | undefined => {
         if (!validado) return undefined;
         return errores[campo] ? "invalido" : "valido";
     };
 
-    const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+    const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const nuevos: Errores = {
@@ -48,36 +50,45 @@ function FormularioRegistro({ alTerminar }: FormularioRegistroProps) {
 
         if (Object.values(nuevos).some(Boolean)) return;
 
-        const usuarios = obtenerUsuarios();
-        const correo = email.trim().toLowerCase();
-
-        if (usuarios.some((u) => u.email.toLowerCase() === correo)) {
-            alert("Este correo ya está registrado.");
-            return;
-        }
-
-        guardarUsuarios([
-            ...usuarios,
-            {
+        setEnviando(true);
+        try {
+            await registrarClienteApi({
                 run: run.trim(),
-                email: correo,
-                password,
-                rol: "Cliente",
                 nombre: `${nombre.trim()} ${apellido.trim()}`,
-                suspendido: false,
-            },
-        ]);
+                email: email.trim().toLowerCase(),
+                password,
+            });
 
-        alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
+            alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
 
-        setRun("");
-        setNombre("");
-        setApellido("");
-        setEmail("");
-        setPassword("");
-        setErrores({});
-        setValidado(false);
-        alTerminar();
+            setRun("");
+            setNombre("");
+            setApellido("");
+            setEmail("");
+            setPassword("");
+            setErrores({});
+            setValidado(false);
+            alTerminar();
+        } catch (err) {
+            if (err instanceof ApiError) {
+                if (err.status === 409) {
+                    const msg = err.message.toLowerCase();
+                    if (msg.includes("run")) {
+                        setErrores((prev) => ({ ...prev, run: err.message }));
+                    } else {
+                        setErrores((prev) => ({ ...prev, email: err.message }));
+                    }
+                } else if (Object.keys(err.errores).length > 0) {
+                    setErrores((prev) => ({ ...prev, ...err.errores }));
+                } else {
+                    alert(err.message);
+                }
+            } else {
+                alert("Ocurrió un error inesperado al registrar la cuenta.");
+            }
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -139,7 +150,7 @@ function FormularioRegistro({ alTerminar }: FormularioRegistroProps) {
                 espacio={4}
             />
 
-            <Boton texto="Registrarse" tipo="submit" bloque />
+            <Boton texto={enviando ? "Registrando..." : "Registrarse"} tipo="submit" bloque deshabilitado={enviando} />
         </form>
     );
 }

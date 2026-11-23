@@ -3,43 +3,53 @@ import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import Boton from "../atomos/Boton";
 import { useAuth } from "../../contexto/useAuth";
-import { obtenerUsuarios } from "../../datos/usuarios";
+import { iniciarSesionApi } from "../../datos/usuarios";
+import { ApiError } from "../../utils/api";
 
 function FormularioLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [enviando, setEnviando] = useState(false);
 
     const { iniciarSesion } = useAuth();
     const navegar = useNavigate();
 
-    const manejarEnvio = (e: SubmitEvent<HTMLFormElement>) => {
+    const manejarEnvio = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError("");
 
         const correo = email.trim().toLowerCase();
-        const usuario = obtenerUsuarios().find(
-            (u) => u.email.toLowerCase() === correo && u.password === password
-        );
-
-        if (!usuario) {
-            setError("Correo o contraseña incorrectos.");
+        if (!correo || !password) {
+            setError("Ingresa tu correo y contraseña.");
             return;
         }
 
-        if (usuario.suspendido) {
-            alert("Acceso denegado: Su cuenta se encuentra suspendida.");
-            return;
-        }
+        setEnviando(true);
+        try {
+            const nuevaSesion = await iniciarSesionApi(correo, password);
+            alert(`¡Bienvenido, ${nuevaSesion.nombre}! Redirigiendo...`);
+            iniciarSesion(nuevaSesion);
 
-        alert(`¡Bienvenido, ${usuario.nombre}! Redirigiendo...`);
-        iniciarSesion({ email: usuario.email, nombre: usuario.nombre, rol: usuario.rol });
-
-        if (usuario.rol === "Administrador") {
-            navegar("/admin");
-        } else if (usuario.rol === "Recepcionista") {
-            navegar("/recepcion");
-        } else {
-            navegar("/");
+            if (nuevaSesion.rol === "Administrador") {
+                navegar("/admin");
+            } else if (nuevaSesion.rol === "Recepcionista") {
+                navegar("/recepcion");
+            } else {
+                navegar("/");
+            }
+        } catch (err) {
+            if (err instanceof ApiError) {
+                if (err.status === 403) {
+                    alert(`Acceso denegado: ${err.message}`);
+                } else {
+                    setError(err.message);
+                }
+            } else {
+                setError("Ocurrió un error inesperado al iniciar sesión.");
+            }
+        } finally {
+            setEnviando(false);
         }
     };
 
@@ -65,7 +75,7 @@ function FormularioLogin() {
                 estado={error ? "invalido" : undefined}
                 espacio={4}
             />
-            <Boton texto="Ingresar" tipo="submit" bloque />
+            <Boton texto={enviando ? "Ingresando..." : "Ingresar"} tipo="submit" bloque deshabilitado={enviando} />
         </form>
     );
 }

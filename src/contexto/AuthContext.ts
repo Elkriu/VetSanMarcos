@@ -3,6 +3,7 @@ import type { Sesion } from "../datos/usuarios";
 
 export interface AuthContextoTipo {
     sesion: Sesion | null;
+    cargando: boolean;
     iniciarSesion: (sesion: Sesion) => void;
     cerrarSesion: () => void;
 }

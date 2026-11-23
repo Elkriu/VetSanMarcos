@@ -9,8 +9,9 @@ interface RutaProtegidaProps {
 }
 
 function RutaProtegida({ roles, children }: RutaProtegidaProps) {
-    const { sesion } = useAuth();
+    const { sesion, cargando } = useAuth();
 
+    if (cargando) return null;
     if (!sesion) return <Navigate to="/login" replace />;
     if (roles && !roles.includes(sesion.rol)) return <Navigate to="/" replace />;
 
