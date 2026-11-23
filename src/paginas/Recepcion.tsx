@@ -1,14 +1,14 @@
-import { useState, type SubmitEvent } from "react";
+import { useState, useEffect, type SubmitEvent } from "react";
 import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
 import Boton from "../componentes/atomos/Boton";
 import Modal from "../componentes/organismos/Modal";
-import SeccionInventario from "../componentes/organismos/SeccionInventario";
-import { obtenerUsuarios } from "../datos/usuarios";
+import { listarUsuarios, type Usuario } from "../datos/usuarios";
 import { obtenerMensajes } from "../datos/mensajes";
 import { servicios } from "../datos/servicios";
 import { mascotas } from "../datos/productos";
+import { ApiError } from "../utils/api";
 import {
     obtenerCitas,
     guardarCitas,
@@ -73,9 +73,33 @@ function SelectorFechaHora({
 }
 
 function Recepcion() {
-    const usuarios = obtenerUsuarios();
+    const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+    const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
+    const [errorUsuarios, setErrorUsuarios] = useState("");
     const mensajes = obtenerMensajes();
     const [citas, setCitas] = useState(obtenerCitas);
+
+    useEffect(() => {
+        let activo = true;
+        listarUsuarios()
+            .then((lista) => {
+                if (activo) setUsuarios(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setErrorUsuarios(
+                        err instanceof ApiError ? err.message : "No se pudo cargar el directorio de usuarios."
+                    );
+                }
+            })
+            .finally(() => {
+                if (activo) setCargandoUsuarios(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, []);
 
     const actualizarCitas = (nuevas: Cita[]) => {
         guardarCitas(nuevas);
@@ -352,33 +376,45 @@ function Recepcion() {
                             </tr>
                         </thead>
                         <tbody>
-                            {usuarios.map((u) => {
-                                const esStaff = u.rol === "Administrador" || u.rol === "Recepcionista";
-                                return (
-                                    <tr key={u.email}>
-                                        <td className="fw-semibold">{u.nombre || "Sin nombre"}</td>
-                                        <td>{u.email}</td>
-                                        <td>
-                                            <span className={`badge ${esStaff ? "bg-dark" : "bg-secondary"}`}>
-                                                {u.rol}{esStaff && " (Protegido)"}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            {u.suspendido ? (
-                                                <span className="badge bg-danger">Suspendido</span>
-                                            ) : (
-                                                <span className="badge bg-success">Activo</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                            {cargandoUsuarios ? (
+                                <tr>
+                                    <td colSpan={4} className="text-center text-muted py-3">
+                                        Cargando usuarios...
+                                    </td>
+                                </tr>
+                            ) : errorUsuarios ? (
+                                <tr>
+                                    <td colSpan={4} className="text-center text-danger py-3">
+                                        {errorUsuarios}
+                                    </td>
+                                </tr>
+                            ) : (
+                                usuarios.map((u) => {
+                                    const esStaff = u.rol === "Administrador" || u.rol === "Recepcionista";
+                                    return (
+                                        <tr key={u.id}>
+                                            <td className="fw-semibold">{u.nombre || "Sin nombre"}</td>
+                                            <td>{u.email}</td>
+                                            <td>
+                                                <span className={`badge ${esStaff ? "bg-dark" : "bg-secondary"}`}>
+                                                    {u.rol}{esStaff && " (Protegido)"}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {u.suspendido ? (
+                                                    <span className="badge bg-danger">Suspendido</span>
+                                                ) : (
+                                                    <span className="badge bg-success">Activo</span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            )}
                         </tbody>
                     </table>
                 </div>
             </TarjetaPanel>
-
-            <SeccionInventario />
 
             <Modal abierto={citaEditada !== null} titulo="Modificar cita" alCerrar={() => setCitaEditada(null)}>
                 {citaEditada && (

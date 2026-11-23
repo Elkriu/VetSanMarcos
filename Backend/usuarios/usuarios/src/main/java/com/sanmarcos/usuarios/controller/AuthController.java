@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Autenticación", description = "Login, registro público y validación de sesión")
+@Tag(name = "Autenticación", description = "Login, registro público, validación y renovación de sesión")
 public class AuthController {
 
     private final AuthService authService;
@@ -61,5 +61,18 @@ public class AuthController {
     @GetMapping("/validar")
     public UsuarioResponse validar(Authentication authentication) {
         return authService.perfil(authentication.getName());
+    }
+
+    @Operation(summary = "Renovar token",
+            description = "Con un token vigente entrega uno nuevo y los datos actualizados del usuario. "
+                    + "Se usa al recargar la página para extender la sesión.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Token renovado"),
+            @ApiResponse(responseCode = "401", description = "Token inválido, vencido o usuario no autorizado")
+    })
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping("/renovar")
+    public LoginResponse renovar(Authentication authentication) {
+        return authService.renovar(authentication.getName());
     }
 }

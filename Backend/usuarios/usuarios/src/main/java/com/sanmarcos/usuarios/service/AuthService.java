@@ -63,11 +63,19 @@ public class AuthService {
 
         return UsuarioResponse.desde(usuarioRepository.save(usuario));
     }
-    
+
     @Transactional(readOnly = true)
     public UsuarioResponse perfil(String email) {
         return usuarioRepository.findByEmailIgnoreCase(email)
                 .map(UsuarioResponse::desde)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Sesión inválida."));
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse renovar(String email) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Sesión inválida."));
+
+        return new LoginResponse(jwtService.generarToken(usuario), UsuarioResponse.desde(usuario));
     }
 }
