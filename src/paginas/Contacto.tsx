@@ -2,6 +2,8 @@ import { useState, useEffect, type SubmitEvent } from "react";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import Boton from "../componentes/atomos/Boton";
+import { enviarMensajeApi } from "../datos/mensajes";
+import { ApiError } from "../utils/api";
 import {
     validarSoloLetras,
     validarCorreo,
@@ -9,17 +11,8 @@ import {
     obtenerError,
 } from "../utils/validaciones";
 
-interface MensajeContacto {
-    nombre: string;
-    email: string;
-    comentario: string;
-    fecha: string;
-}
-
 type Campo = "nombre" | "email" | "comentario";
 type Errores = Partial<Record<Campo, string>>;
-
-const CLAVE_MENSAJES = "mensajes_contacto";
 
 function Contacto() {
     const [nombre, setNombre] = useState("");
@@ -29,6 +22,7 @@ function Contacto() {
 
     const [errores, setErrores] = useState<Errores>({});
     const [validado, setValidado] = useState(false);
+    const [enviando, setEnviando] = useState(false);
     const [mostrarAlerta, setMostrarAlerta] = useState(false);
 
     useEffect(() => {
@@ -42,6 +36,7 @@ function Contacto() {
                     setEsReadonlyEmail(true);
                 }
             } catch {
+                // Si el JSON estuviera corrupto, dejamos los campos editables
             }
         }
     }, []);
@@ -58,7 +53,7 @@ function Contacto() {
         return "form-control";
     };
 
-    const handleEnviar = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleEnviar = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const nuevos: Errores = {
@@ -72,27 +67,35 @@ function Contacto() {
 
         if (Object.values(nuevos).some(Boolean)) return;
 
-        const msgsLocal: MensajeContacto[] = JSON.parse(
-            localStorage.getItem(CLAVE_MENSAJES) || "[]"
-        );
+        setEnviando(true);
+        try {
+            await enviarMensajeApi({
+                nombre: nombre.trim(),
+                email: email.trim().toLowerCase(),
+                comentario: comentario.trim(),
+            });
 
-        const nuevoMensaje: MensajeContacto = {
-            nombre: nombre.trim(),
-            email: email.trim().toLowerCase(),
-            comentario: comentario.trim(),
-            fecha: new Date().toLocaleDateString("es-CL"),
-        };
+            setComentario("");
+            setErrores({});
+            setValidado(false);
+            setMostrarAlerta(true);
 
-        localStorage.setItem(CLAVE_MENSAJES, JSON.stringify([...msgsLocal, nuevoMensaje]));
-
-        setComentario("");
-        setErrores({});
-        setValidado(false);
-        setMostrarAlerta(true);
-
-        setTimeout(() => {
-            setMostrarAlerta(false);
-        }, 4000);
+            setTimeout(() => {
+                setMostrarAlerta(false);
+            }, 4000);
+        } catch (err) {
+            if (err instanceof ApiError) {
+                if (Object.keys(err.errores).length > 0) {
+                    setErrores((prev) => ({ ...prev, ...err.errores }));
+                } else {
+                    alert(err.message);
+                }
+            } else {
+                alert("Ocurrió un error inesperado al enviar el mensaje.");
+            }
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -158,13 +161,13 @@ function Contacto() {
 
                         <form onSubmit={handleEnviar} noValidate>
                             <CampoFormulario
-                              etiqueta="Nombre"
-                              id="contacto-nombre"
-                              valor={nombre}
-                              alCambiar={(valor) => setNombre(valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, ""))}
-                              placeholder="Tu nombre"
-                              estado={estado("nombre")}
-                              error={errores.nombre}
+                                etiqueta="Nombre"
+                                id="contacto-nombre"
+                                valor={nombre}
+                                alCambiar={(valor) => setNombre(valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, ""))}
+                                placeholder="Tu nombre"
+                                estado={estado("nombre")}
+                                error={errores.nombre}
                             />
 
                             <CampoFormulario
@@ -196,7 +199,7 @@ function Contacto() {
                                 )}
                             </div>
 
-                            <Boton texto="Enviar Mensaje" tipo="submit" bloque />
+                            <Boton texto={enviando ? "Enviando..." : "Enviar Mensaje"} tipo="submit" bloque deshabilitado={enviando} />
                         </form>
 
                         {mostrarAlerta && (
