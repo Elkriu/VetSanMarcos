@@ -1,4 +1,7 @@
+import { API_VENTAS, peticion } from "../utils/api";
+
 export interface LineaBoleta {
+    productoId?: number;
     nombre: string;
     precio: number;
     cantidad: number;
@@ -16,53 +19,27 @@ export interface Boleta {
     tarjeta: string;
 }
 
-export type NuevaBoleta = Omit<Boleta, "numero" | "fecha">;
+export interface ItemCompra {
+    productoId: number;
+    cantidad: number;
+}
 
-// Inicializa las boletas desde localStorage para no perderlas al recargar la página
-const inicializarBoletas = (): Boleta[] => {
-    const guardadas = localStorage.getItem("boletas_veterinaria");
-    return guardadas ? JSON.parse(guardadas) : [];
-};
+export interface CrearBoletaPayload {
+    tarjeta: string;
+    items: ItemCompra[];
+}
 
-let boletasDB: Boleta[] = inicializarBoletas();
-
-// Calcula el próximo número de boleta secuencial
-const obtenerProximoNumero = (): number => {
-    if (boletasDB.length === 0) return 1000;
-    const maxNumero = Math.max(...boletasDB.map(b => b.numero));
-    return maxNumero + 1;
-};
-
-export const buscarBoleta = (numero: number): Boleta | undefined => {
-    return boletasDB.find((boleta) => boleta.numero === Math.floor(numero));
-};
-
-export const guardarBoleta = (datos: NuevaBoleta): Boleta => {
-    const fechaActual = new Date().toLocaleDateString("es-CL", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit"
+export function registrarBoletaApi(datos: CrearBoletaPayload): Promise<Boleta> {
+    return peticion<Boleta>(`${API_VENTAS}/boletas`, {
+        method: "POST",
+        body: JSON.stringify(datos),
     });
+}
 
-    const nuevaBoleta: Boleta = {
-        ...datos,
-        numero: obtenerProximoNumero(),
-        fecha: fechaActual,
-    };
+export function listarBoletasApi(): Promise<Boleta[]> {
+    return peticion<Boleta[]>(`${API_VENTAS}/boletas`);
+}
 
-    boletasDB.push(nuevaBoleta);
-    
-    // Guarda el arreglo actualizado en localStorage simulando la persistencia de una BD
-    localStorage.setItem("boletas_veterinaria", JSON.stringify(boletasDB));
-
-    return nuevaBoleta;
-};
-
-export const buscarBoletasDeCliente = (email: string): Boleta[] => {
-    const correo = email.toLowerCase();
-    return boletasDB
-        .filter((b) => b.clienteEmail.toLowerCase() === correo)
-        .sort((a, b) => b.numero - a.numero);
-};
+export function buscarBoletaApi(numero: number): Promise<Boleta> {
+    return peticion<Boleta>(`${API_VENTAS}/boletas/${Math.floor(numero)}`);
+}

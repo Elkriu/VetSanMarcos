@@ -1,15 +1,49 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Boton from "../componentes/atomos/Boton";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
-import { buscarBoleta } from "../datos/boletas";
+import { buscarBoletaApi, type Boleta as BoletaType } from "../datos/boletas";
 import { formatoPeso } from "../utils/formato";
 
 function Boleta() {
     const { numero } = useParams();
     const { sesion } = useAuth();
+    const [boleta, setBoleta] = useState<BoletaType | null>(null);
+    const [cargando, setCargando] = useState(true);
 
-    const boleta = buscarBoleta(Number(numero));
+    useEffect(() => {
+        const num = Number(numero);
+        if (!Number.isFinite(num) || num <= 0) {
+            setCargando(false);
+            return;
+        }
+
+        let activo = true;
+        buscarBoletaApi(num)
+            .then((data) => {
+                if (activo) setBoleta(data);
+            })
+            .catch(() => {
+                if (activo) setBoleta(null);
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, [numero]);
+
+    if (cargando) {
+        return (
+            <div className="container text-center py-5">
+                <p className="text-muted">Cargando boleta electrónica...</p>
+            </div>
+        );
+    }
+
     const puedeVer = boleta && sesion && (sesion.rol !== "Cliente" || sesion.email === boleta.clienteEmail);
 
     if (!boleta || !puedeVer) {
@@ -58,8 +92,8 @@ function Boleta() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {boleta.lineas.map((l) => (
-                                        <tr key={l.nombre}>
+                                    {boleta.lineas.map((l, idx) => (
+                                        <tr key={`${l.nombre}-${idx}`}>
                                             <td>{l.nombre}</td>
                                             <td className="text-center">{l.cantidad}</td>
                                             <td className="text-end">{formatoPeso(l.precio)}</td>

@@ -3,20 +3,19 @@ import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
-import { useAuth } from "../contexto/useAuth";
 import { listarCitasApi, cancelarCitaApi, ordenarPorFecha, type Cita } from "../datos/citas";
-import { buscarBoletasDeCliente } from "../datos/boletas";
+import { listarBoletasApi, type Boleta } from "../datos/boletas";
 import { formatoPeso } from "../utils/formato";
 import { ApiError } from "../utils/api";
 
 function MisCitas() {
-    const { sesion } = useAuth();
     const [citas, setCitas] = useState<Cita[]>([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState("");
 
-    const correo = sesion?.email.toLowerCase() ?? "";
-    const misCompras = buscarBoletasDeCliente(correo);
+    const [misCompras, setMisCompras] = useState<Boleta[]>([]);
+    const [cargandoCompras, setCargandoCompras] = useState(true);
+    const [errorCompras, setErrorCompras] = useState("");
 
     useEffect(() => {
         let activo = true;
@@ -31,6 +30,19 @@ function MisCitas() {
             })
             .finally(() => {
                 if (activo) setCargando(false);
+            });
+
+        listarBoletasApi()
+            .then((lista) => {
+                if (activo) setMisCompras(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setErrorCompras(err instanceof ApiError ? err.message : "No se pudo cargar tu historial de compras.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargandoCompras(false);
             });
 
         return () => {
@@ -131,7 +143,19 @@ function MisCitas() {
                             </tr>
                         </thead>
                         <tbody>
-                            {misCompras.length === 0 ? (
+                            {cargandoCompras ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-muted py-4">
+                                        Cargando historial de compras...
+                                    </td>
+                                </tr>
+                            ) : errorCompras ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-danger py-4">
+                                        {errorCompras}
+                                    </td>
+                                </tr>
+                            ) : misCompras.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="text-center text-muted py-4">
                                         Aún no tienes compras registradas.
