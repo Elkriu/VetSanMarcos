@@ -5,8 +5,8 @@ import FormularioPago from "../componentes/organismos/FormularioPago";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
 import { useCarrito } from "../contexto/useCarrito";
-import { listarProductosApi, descontarStockApi, type Producto } from "../datos/productos";
-import { guardarBoleta } from "../datos/boletas";
+import { listarProductosApi, type Producto } from "../datos/productos";
+import { registrarBoletaApi } from "../datos/boletas";
 import { formatoPeso, desglosarIva } from "../utils/formato";
 import { ApiError } from "../utils/api";
 
@@ -66,29 +66,19 @@ function Pago() {
 
     const alExito = async (ultimosDigitos: string) => {
         try {
-            await descontarStockApi(
-                lineas.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad })),
-            );
-
-            const boleta = guardarBoleta({
-                clienteNombre: sesion.nombre,
-                clienteEmail: sesion.email,
-                lineas: lineas.map((l) => ({
-                    nombre: l.producto.nombre,
-                    precio: l.producto.precio,
+            const boleta = await registrarBoletaApi({
+                tarjeta: ultimosDigitos,
+                items: lineas.map((l) => ({
+                    productoId: l.producto.id,
                     cantidad: l.cantidad,
                 })),
-                neto,
-                iva,
-                total,
-                tarjeta: ultimosDigitos,
             });
 
             setPagado(true);
             vaciar();
             navegar(`/boleta/${boleta.numero}`);
         } catch (err) {
-            alert(err instanceof ApiError ? err.message : "No se pudo descontar el stock del inventario.");
+            alert(err instanceof ApiError ? err.message : "No se pudo procesar la compra.");
         }
     };
 
