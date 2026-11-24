@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import TarjetaPanel from "../moleculas/TarjetaPanel";
 import TablaInventario from "./TablaInventario";
 import CampoFormulario from "../moleculas/CampoFormulario";
@@ -28,11 +28,8 @@ interface FormProducto {
     stock: string;
     emoji: string;
     imagen: string;
-    nombreArchivo: string;
     descripcion: string;
 }
-
-const IMAGEN_POR_DEFECTO = "/img/productos/alimento-perro.webp";
 
 const FORM_VACIO: FormProducto = {
     nombre: "",
@@ -41,19 +38,9 @@ const FORM_VACIO: FormProducto = {
     precio: "",
     stock: "10",
     emoji: "🐾",
-    imagen: IMAGEN_POR_DEFECTO,
-    nombreArchivo: "alimento-perro.webp",
+    imagen: "/img/productos/alimento-perro.webp",
     descripcion: "",
 };
-
-function leerImagenComoDataUrl(archivo: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result));
-        reader.onerror = () => reject(new Error("No se pudo leer la imagen seleccionada."));
-        reader.readAsDataURL(archivo);
-    });
-}
 
 function SeccionInventario() {
     const [productos, setProductos] = useState<Producto[]>([]);
@@ -97,32 +84,6 @@ function SeccionInventario() {
         setErrorForm("");
     };
 
-    const alSeleccionarImagen = async (e: ChangeEvent<HTMLInputElement>) => {
-        const archivo = e.target.files?.[0];
-        if (!archivo) return;
-
-        if (!archivo.type.startsWith("image/")) {
-            setErrorForm("Selecciona un archivo de imagen válido (.jpg, .png, .webp, etc.).");
-            return;
-        }
-        if (archivo.size > 2 * 1024 * 1024) {
-            setErrorForm("La imagen no debe superar los 2 MB.");
-            return;
-        }
-
-        try {
-            const dataUrl = await leerImagenComoDataUrl(archivo);
-            setForm((prev) => ({
-                ...prev,
-                imagen: dataUrl,
-                nombreArchivo: `/img/productos/${archivo.name}`,
-            }));
-            setErrorForm("");
-        } catch (err) {
-            setErrorForm(err instanceof Error ? err.message : "Error al cargar la imagen.");
-        }
-    };
-
     const abrirCrear = () => {
         setForm(FORM_VACIO);
         setErrorForm("");
@@ -130,10 +91,6 @@ function SeccionInventario() {
     };
 
     const abrirEditar = (p: Producto) => {
-        const nombreExtraido = p.imagen.startsWith("data:")
-            ? "Imagen cargada desde archivo"
-            : p.imagen;
-
         setForm({
             nombre: p.nombre,
             categoria: p.categoria,
@@ -142,7 +99,6 @@ function SeccionInventario() {
             stock: String(p.stock),
             emoji: p.emoji,
             imagen: p.imagen,
-            nombreArchivo: nombreExtraido,
             descripcion: p.descripcion,
         });
         setErrorForm("");
@@ -158,7 +114,7 @@ function SeccionInventario() {
         const precio = Number(form.precio);
         const stock = Number(form.stock);
         const emoji = form.emoji.trim() || "🐾";
-        const imagen = form.imagen || IMAGEN_POR_DEFECTO;
+        const imagen = form.imagen.trim() || "/img/productos/alimento-perro.webp";
         const descripcion = form.descripcion.trim();
 
         if (!nombre || !descripcion) {
@@ -343,31 +299,13 @@ function SeccionInventario() {
                         </div>
                     </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="prod-imagen-file" className="form-label small fw-semibold">
-                            Imagen del producto
-                        </label>
-                        <div className="d-flex align-items-center gap-3">
-                            <img
-                                src={form.imagen}
-                                alt="Vista previa"
-                                className="rounded-3 border bg-light"
-                                style={{ width: "64px", height: "64px", objectFit: "cover" }}
-                            />
-                            <div className="flex-grow-1">
-                                <input
-                                    id="prod-imagen-file"
-                                    type="file"
-                                    accept="image/*"
-                                    className="form-control form-control-sm"
-                                    onChange={(e) => void alSeleccionarImagen(e)}
-                                />
-                                <small className="text-muted d-block mt-1 text-truncate">
-                                    Archivo: {form.nombreArchivo}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
+                    <CampoFormulario
+                        etiqueta="Ruta de imagen"
+                        id="prod-imagen"
+                        valor={form.imagen}
+                        alCambiar={(v) => cambiar("imagen", v)}
+                        placeholder="/img/productos/alimento-perro.webp"
+                    />
 
                     <div className="mb-3">
                         <label htmlFor="prod-descripcion" className="form-label small fw-semibold">
