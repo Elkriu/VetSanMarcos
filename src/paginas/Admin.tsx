@@ -15,7 +15,7 @@ import {
     type Rol,
     type Usuario,
 } from "../datos/usuarios";
-import { obtenerCitas, guardarCitas, correoDeCita, ordenarPorFecha } from "../datos/citas";
+import { listarCitasApi, ordenarPorFecha, type Cita } from "../datos/citas";
 import { ApiError } from "../utils/api";
 import {
     validarRun,
@@ -45,7 +45,10 @@ function Admin() {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
     const [errorUsuarios, setErrorUsuarios] = useState("");
-    const [citas, setCitas] = useState(obtenerCitas);
+
+    const [citas, setCitas] = useState<Cita[]>([]);
+    const [cargandoCitas, setCargandoCitas] = useState(true);
+    const [errorCitas, setErrorCitas] = useState("");
 
     // null = cerrado, "nuevo" = crear, number = id del usuario editado
     const [modal, setModal] = useState<null | "nuevo" | number>(null);
@@ -68,6 +71,24 @@ function Admin() {
 
     useEffect(() => {
         void cargarUsuarios();
+
+        let activo = true;
+        listarCitasApi()
+            .then((lista) => {
+                if (activo) setCitas(ordenarPorFecha(lista));
+            })
+            .catch((err) => {
+                if (activo) {
+                    setErrorCitas(err instanceof ApiError ? err.message : "No se pudieron cargar las citas médicas.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargandoCitas(false);
+            });
+
+        return () => {
+            activo = false;
+        };
     }, [cargarUsuarios]);
 
     const cambiar = <K extends keyof FormUsuario>(campo: K, valor: FormUsuario[K]) =>
@@ -144,17 +165,6 @@ function Admin() {
                 });
 
                 setUsuarios((prev) => prev.map((u) => (u.id === original.id ? actualizado : u)));
-
-                // Si cambió el correo, sus citas siguen siendo suyas (mientras citas siga en localStorage)
-                if (email !== original.email) {
-                    const actualizadas = citas.map((c) =>
-                        correoDeCita(c).toLowerCase() === original.email.toLowerCase()
-                            ? { ...c, emailCliente: email }
-                            : c
-                    );
-                    guardarCitas(actualizadas);
-                    setCitas(actualizadas);
-                }
             }
 
             cerrarModal();
@@ -313,14 +323,26 @@ function Admin() {
                             </tr>
                         </thead>
                         <tbody>
-                            {citas.length === 0 ? (
+                            {cargandoCitas ? (
+                                <tr>
+                                    <td colSpan={3} className="text-center text-muted py-3">
+                                        Cargando citas...
+                                    </td>
+                                </tr>
+                            ) : errorCitas ? (
+                                <tr>
+                                    <td colSpan={3} className="text-center text-danger py-3">
+                                        {errorCitas}
+                                    </td>
+                                </tr>
+                            ) : citas.length === 0 ? (
                                 <tr>
                                     <td colSpan={3} className="text-center text-muted py-3">
                                         No hay citas agendadas actualmente.
                                     </td>
                                 </tr>
                             ) : (
-                                ordenarPorFecha(citas).map((c) => (
+                                citas.map((c) => (
                                     <tr key={c.id}>
                                         <td><span className="fw-semibold text-primary">{c.servicio}</span></td>
                                         <td>{c.fecha}</td>
