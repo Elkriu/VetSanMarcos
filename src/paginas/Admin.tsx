@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, type SubmitEvent } from "react";
 import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
+import SeccionInventario from "../componentes/organismos/SeccionInventario";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import CampoSelect from "../componentes/moleculas/CampoSelect";
 import Boton from "../componentes/atomos/Boton";
@@ -354,6 +355,8 @@ function Admin() {
                     </table>
                 </div>
             </TarjetaPanel>
+
+            <SeccionInventario />
 
             <Modal
                 abierto={modal !== null}

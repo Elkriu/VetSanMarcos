@@ -2,6 +2,7 @@ import { useState, useEffect, type SubmitEvent } from "react";
 import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
+import SeccionInventario from "../componentes/organismos/SeccionInventario";
 import Boton from "../componentes/atomos/Boton";
 import Modal from "../componentes/organismos/Modal";
 import { listarUsuarios, type Usuario } from "../datos/usuarios";
@@ -551,6 +552,8 @@ function Recepcion() {
                     </table>
                 </div>
             </TarjetaPanel>
+
+            <SeccionInventario />
 
             {/* Usuarios (solo lectura) */}
             <TarjetaPanel
