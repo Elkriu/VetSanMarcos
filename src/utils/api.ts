@@ -1,11 +1,13 @@
-// Dirección de cada microservicio (cada uno tiene su propio puerto)
-export const API_USUARIOS = "http://localhost:8081";
-export const API_CONTACTO = "http://localhost:8082";
-export const API_CITAS = "http://localhost:8083";
-export const API_INVENTARIO = "http://localhost:8084";
-export const API_VENTAS = "http://localhost:8085";
-export const API_PAGOS = "http://localhost:8086";
-export const API_DASHBOARD = "http://localhost:8087";
+// Punto de entrada único a través del API Gateway (8080)
+export const API_GATEWAY = "http://localhost:8080";
+
+export const API_USUARIOS = API_GATEWAY;
+export const API_CONTACTO = API_GATEWAY;
+export const API_CITAS = API_GATEWAY;
+export const API_INVENTARIO = API_GATEWAY;
+export const API_VENTAS = API_GATEWAY;
+export const API_PAGOS = API_GATEWAY;
+export const API_DASHBOARD = API_GATEWAY;
 
 const CLAVE_SESION = "sesion_activa";
 
