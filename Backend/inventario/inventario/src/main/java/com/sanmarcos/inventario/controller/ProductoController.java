@@ -36,15 +36,15 @@ public class ProductoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @Operation(summary = "Crear producto en inventario (Solo Admin)")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'RECEPCIONISTA')")
+    @Operation(summary = "Crear producto en inventario (Admin y Recepción)")
     public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(request));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @Operation(summary = "Actualizar datos y stock de un producto (Solo Admin)")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'RECEPCIONISTA')")
+    @Operation(summary = "Actualizar datos y stock de un producto (Admin y Recepción)")
     public ProductoResponse actualizar(@PathVariable Long id, @Valid @RequestBody ProductoRequest request) {
         return service.actualizar(id, request);
     }
@@ -64,8 +64,8 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @Operation(summary = "Eliminar producto del catálogo (Solo Admin)")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'RECEPCIONISTA')")
+    @Operation(summary = "Eliminar producto del catálogo (Admin y Recepción)")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
