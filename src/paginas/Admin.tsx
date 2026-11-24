@@ -17,6 +17,8 @@ import {
     type Usuario,
 } from "../datos/usuarios";
 import { listarCitasApi, ordenarPorFecha, type Cita } from "../datos/citas";
+import { obtenerResumenDashboardApi, type DashboardResumen } from "../datos/dashboard";
+import { formatoPeso } from "../utils/formato";
 import { ApiError } from "../utils/api";
 import {
     validarRun,
@@ -43,6 +45,8 @@ type Errores = Partial<Record<Campo, string>>;
 const FORM_VACIO: FormUsuario = { run: "", nombre: "", email: "", password: "", rol: "Cliente" };
 
 function Admin() {
+    const [resumen, setResumen] = useState<DashboardResumen | null>(null);
+
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
     const [errorUsuarios, setErrorUsuarios] = useState("");
@@ -56,6 +60,15 @@ function Admin() {
     const [form, setForm] = useState<FormUsuario>(FORM_VACIO);
     const [errores, setErrores] = useState<Errores>({});
     const [guardando, setGuardando] = useState(false);
+
+    const cargarResumen = useCallback(async () => {
+        try {
+            const datos = await obtenerResumenDashboardApi();
+            setResumen(datos);
+        } catch {
+            setResumen(null);
+        }
+    }, []);
 
     const cargarUsuarios = useCallback(async () => {
         setCargandoUsuarios(true);
@@ -71,6 +84,7 @@ function Admin() {
     }, []);
 
     useEffect(() => {
+        void cargarResumen();
         void cargarUsuarios();
 
         let activo = true;
@@ -90,7 +104,7 @@ function Admin() {
         return () => {
             activo = false;
         };
-    }, [cargarUsuarios]);
+    }, [cargarResumen, cargarUsuarios]);
 
     const cambiar = <K extends keyof FormUsuario>(campo: K, valor: FormUsuario[K]) =>
         setForm((anterior) => ({ ...anterior, [campo]: valor }));
@@ -168,6 +182,7 @@ function Admin() {
                 setUsuarios((prev) => prev.map((u) => (u.id === original.id ? actualizado : u)));
             }
 
+            void cargarResumen();
             cerrarModal();
         } catch (err) {
             if (err instanceof ApiError) {
@@ -199,6 +214,7 @@ function Admin() {
         try {
             const actualizado = await alternarSuspension(u.id);
             setUsuarios((prev) => prev.map((x) => (x.id === u.id ? actualizado : x)));
+            void cargarResumen();
         } catch (err) {
             alert(err instanceof ApiError ? err.message : "No se pudo cambiar el estado del usuario.");
         }
@@ -214,6 +230,7 @@ function Admin() {
         try {
             await eliminarUsuario(u.id);
             setUsuarios((prev) => prev.filter((x) => x.id !== u.id));
+            void cargarResumen();
         } catch (err) {
             alert(err instanceof ApiError ? err.message : "No se pudo eliminar el usuario.");
         }
@@ -227,6 +244,43 @@ function Admin() {
                 titulo="Panel de Control y Gestión"
                 descripcion="Gestión centralizada de usuarios, roles y supervisiones de la clínica."
             />
+
+            {resumen && (
+                <div className="row g-3 mb-4">
+                    <div className="col-sm-6 col-xl-3">
+                        <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span className="text-muted small">Ingresos en Tienda</span>
+                            <span className="h4 fw-bold text-primary mb-1">{formatoPeso(resumen.ingresosTotales)}</span>
+                            <small className="text-muted">{resumen.totalBoletas} boleta(s) emitidas</small>
+                        </div>
+                    </div>
+                    <div className="col-sm-6 col-xl-3">
+                        <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span className="text-muted small">Citas Médicas</span>
+                            <span className="h4 fw-bold text-success mb-1">{resumen.citasAgendadas}</span>
+                            <small className="text-muted">Agendadas en sistema</small>
+                        </div>
+                    </div>
+                    <div className="col-sm-6 col-xl-3">
+                        <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span className="text-muted small">Usuarios Activos</span>
+                            <span className="h4 fw-bold text-dark mb-1">
+                                {resumen.usuariosActivos} / {resumen.totalUsuarios}
+                            </span>
+                            <small className="text-muted">Cuentas habilitadas</small>
+                        </div>
+                    </div>
+                    <div className="col-sm-6 col-xl-3">
+                        <div className="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                            <span className="text-muted small">Inventario y Mensajes</span>
+                            <span className="h4 fw-bold text-warning mb-1">
+                                {resumen.productosBajoStock} bajo stock
+                            </span>
+                            <small className="text-muted">{resumen.mensajesSinLeer} mensaje(s) sin leer</small>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <TarjetaPanel
                 borde="primary"
