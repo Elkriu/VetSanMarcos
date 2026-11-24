@@ -1,37 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import FormularioPago from "../componentes/organismos/FormularioPago";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
 import { useCarrito } from "../contexto/useCarrito";
-import { productos } from "../datos/productos";
+import { listarProductosApi, descontarStockApi, type Producto } from "../datos/productos";
 import { guardarBoleta } from "../datos/boletas";
-import { obtenerStock, descontarStock } from "../datos/stock";
 import { formatoPeso, desglosarIva } from "../utils/formato";
+import { ApiError } from "../utils/api";
 
 function Pago() {
     const { sesion } = useAuth();
     const { items, vaciar } = useCarrito();
     const navegar = useNavigate();
+
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [cargando, setCargando] = useState(true);
     const [pagado, setPagado] = useState(false);
+
+    useEffect(() => {
+        let activo = true;
+        listarProductosApi()
+            .then((lista) => {
+                if (activo) setProductos(lista);
+            })
+            .catch(() => {
+                if (activo) setProductos([]);
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, []);
+
+    if (pagado) return null;
+    if (!sesion) return <Navigate to="/login" replace />;
+    if (cargando) return <p className="text-center text-muted py-5">Verificando inventario...</p>;
 
     const lineas = items.flatMap((item) => {
         const producto = productos.find((p) => p.id === item.id);
         return producto ? [{ producto, cantidad: item.cantidad }] : [];
     });
 
-    const total = lineas.reduce((suma, l) => suma + l.producto.precio * l.cantidad, 0);
-    const { neto, iva } = desglosarIva(total);
-
-    // Al pagar, el carrito queda vacío: así no nos redirige de vuelta al carrito
-    if (pagado) return null;
-    if (!sesion) return <Navigate to="/login" replace />;
     if (lineas.length === 0) return <Navigate to="/carrito" replace />;
 
-    // Se revisa el stock antes de dejar pagar
-    const stock = obtenerStock();
-    const sinStock = lineas.filter((l) => l.cantidad > (stock[l.producto.id] ?? 0));
+    const sinStock = lineas.filter((l) => l.cantidad > l.producto.stock);
 
     if (sinStock.length > 0) {
         return (
@@ -44,26 +61,35 @@ function Pago() {
         );
     }
 
-    const alExito = (ultimosDigitos: string) => {
-        descontarStock(lineas.map((l) => ({ id: l.producto.id, cantidad: l.cantidad })));
+    const total = lineas.reduce((suma, l) => suma + l.producto.precio * l.cantidad, 0);
+    const { neto, iva } = desglosarIva(total);
 
-        const boleta = guardarBoleta({
-            clienteNombre: sesion.nombre,
-            clienteEmail: sesion.email,
-            lineas: lineas.map((l) => ({
-                nombre: l.producto.nombre,
-                precio: l.producto.precio,
-                cantidad: l.cantidad,
-            })),
-            neto,
-            iva,
-            total,
-            tarjeta: ultimosDigitos,
-        });
+    const alExito = async (ultimosDigitos: string) => {
+        try {
+            await descontarStockApi(
+                lineas.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad })),
+            );
 
-        setPagado(true);
-        vaciar();
-        navegar(`/boleta/${boleta.numero}`);
+            const boleta = guardarBoleta({
+                clienteNombre: sesion.nombre,
+                clienteEmail: sesion.email,
+                lineas: lineas.map((l) => ({
+                    nombre: l.producto.nombre,
+                    precio: l.producto.precio,
+                    cantidad: l.cantidad,
+                })),
+                neto,
+                iva,
+                total,
+                tarjeta: ultimosDigitos,
+            });
+
+            setPagado(true);
+            vaciar();
+            navegar(`/boleta/${boleta.numero}`);
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo descontar el stock del inventario.");
+        }
     };
 
     return (

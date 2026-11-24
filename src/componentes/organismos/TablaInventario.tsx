@@ -3,25 +3,23 @@ import Input from "../atomos/Input";
 import Boton from "../atomos/Boton";
 import IndicadorStock from "../atomos/IndicadorStock";
 import type { Producto } from "../../datos/productos";
-import type { Stock } from "../../datos/stock";
 import { validarCantidadStock, obtenerError } from "../../utils/validaciones";
 
 interface TablaInventarioProps {
     productos: Producto[];
-    stock: Stock;
-    alIngresar: (id: number, cantidad: number) => void;
+    alIngresar: (id: number, cantidad: number) => void | Promise<void>;
 }
 
-function TablaInventario({ productos, stock, alIngresar }: TablaInventarioProps) {
+function TablaInventario({ productos, alIngresar }: TablaInventarioProps) {
     const [cantidades, setCantidades] = useState<Record<number, string>>({});
     const [errores, setErrores] = useState<Record<number, string | undefined>>({});
 
     const cambiar = (id: number, valor: string) => {
-        setCantidades({ ...cantidades, [id]: valor.replace(/\D/g, "") });   // solo dígitos
+        setCantidades({ ...cantidades, [id]: valor.replace(/\D/g, "") });
         setErrores({ ...errores, [id]: undefined });
     };
 
-    const ingresar = (id: number) => {
+    const ingresar = async (id: number) => {
         const valor = cantidades[id] ?? "";
         const error = obtenerError(() => validarCantidadStock(valor));
 
@@ -30,7 +28,7 @@ function TablaInventario({ productos, stock, alIngresar }: TablaInventarioProps)
             return;
         }
 
-        alIngresar(id, Number(valor));
+        await alIngresar(id, Number(valor));
         setCantidades({ ...cantidades, [id]: "" });
     };
 
@@ -56,14 +54,14 @@ function TablaInventario({ productos, stock, alIngresar }: TablaInventarioProps)
                                     </div>
                                 </td>
                                 <td>
-                                    <IndicadorStock stock={stock[p.id] ?? 0} />
+                                    <IndicadorStock stock={p.stock} />
                                 </td>
                                 <td style={{ minWidth: "240px" }}>
                                     <form
                                         className="d-flex gap-2"
                                         onSubmit={(e: SubmitEvent<HTMLFormElement>) => {
                                             e.preventDefault();
-                                            ingresar(p.id);
+                                            void ingresar(p.id);
                                         }}
                                         noValidate
                                     >

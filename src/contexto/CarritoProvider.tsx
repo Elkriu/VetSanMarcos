@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from "react";
 import { CarritoContext, type LineaCarrito } from "./CarritoContext";
-import { stockDe } from "../datos/stock";
 
 const CLAVE = "carrito_tienda";
 
@@ -20,11 +19,10 @@ function CarritoProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(CLAVE, JSON.stringify(nuevos));
     };
 
-    const agregar = (id: number) => {
+    const agregar = (id: number, maximo?: number) => {
         const actual = items.find((i) => i.id === id)?.cantidad ?? 0;
 
-        // No se puede superar el stock disponible
-        if (actual >= stockDe(id)) return;
+        if (maximo !== undefined && actual >= maximo) return;
 
         if (actual > 0) {
             guardar(items.map((i) => (i.id === id ? { ...i, cantidad: actual + 1 } : i)));
@@ -33,9 +31,9 @@ function CarritoProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const cambiarCantidad = (id: number, cantidad: number) => {
-        const maximo = Math.max(stockDe(id), 1);
-        const valida = Math.min(Math.max(cantidad, 1), maximo);
+    const cambiarCantidad = (id: number, cantidad: number, maximo?: number) => {
+        const tope = maximo !== undefined ? Math.max(maximo, 1) : cantidad;
+        const valida = Math.min(Math.max(cantidad, 1), tope);
         guardar(items.map((i) => (i.id === id ? { ...i, cantidad: valida } : i)));
     };
 

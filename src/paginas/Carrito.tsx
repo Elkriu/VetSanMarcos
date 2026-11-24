@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import ItemCarrito from "../componentes/moleculas/ItemCarrito";
 import Boton from "../componentes/atomos/Boton";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useCarrito } from "../contexto/useCarrito";
 import { useAuth } from "../contexto/useAuth";
-import { productos } from "../datos/productos";
-import { obtenerStock } from "../datos/stock";
+import { listarProductosApi, type Producto } from "../datos/productos";
 import { formatoPeso, desglosarIva } from "../utils/formato";
+import { ApiError } from "../utils/api";
 
 function Carrito() {
     const { items, cambiarCantidad, quitar, vaciar } = useCarrito();
     const { sesion } = useAuth();
-    const [stock] = useState(obtenerStock);
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
 
-    // Une cada línea del carrito (id + cantidad) con los datos del producto y su stock
+    useEffect(() => {
+        let activo = true;
+        listarProductosApi()
+            .then((lista) => {
+                if (activo) setProductos(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setError(err instanceof ApiError ? err.message : "No se pudo cargar el inventario.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, []);
+
     const lineas = items.flatMap((item) => {
         const producto = productos.find((p) => p.id === item.id);
         return producto
-            ? [{ producto, cantidad: item.cantidad, maximo: stock[producto.id] ?? 0 }]
+            ? [{ producto, cantidad: item.cantidad, maximo: producto.stock }]
             : [];
     });
 
@@ -37,7 +58,11 @@ function Carrito() {
                 descripcion="Revisa tus productos antes de pagar."
             />
 
-            {lineas.length === 0 ? (
+            {cargando ? (
+                <p className="text-center text-muted py-5">Cargando carrito...</p>
+            ) : error ? (
+                <p className="text-center text-danger py-5">{error}</p>
+            ) : lineas.length === 0 ? (
                 <div className="text-center py-5">
                     <p className="text-muted fst-italic mb-3">Tu carrito está vacío.</p>
                     <BotonEnlace texto="Ir a la tienda" a="/tienda" />

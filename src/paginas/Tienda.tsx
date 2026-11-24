@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EncabezadoSeccion from "../componentes/moleculas/EncabezadoSeccion";
 import CampoFormulario from "../componentes/moleculas/CampoFormulario";
 import CampoSelect from "../componentes/moleculas/CampoSelect";
@@ -6,12 +6,16 @@ import CardProducto from "../componentes/moleculas/CardProducto";
 import NotificacionCarrito from "../componentes/moleculas/NotificacionCarrito";
 import Boton from "../componentes/atomos/Boton";
 import { useCarrito } from "../contexto/useCarrito";
-import { productos, categorias, mascotas } from "../datos/productos";
-import { obtenerStock } from "../datos/stock";
+import { listarProductosApi, categorias, mascotas, type Producto } from "../datos/productos";
+import { ApiError } from "../utils/api";
 
 const ordenes = ["Relevancia", "Menor precio", "Mayor precio"];
 
 function Tienda() {
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
+
     const [busqueda, setBusqueda] = useState("");
     const [categoria, setCategoria] = useState("Todas");
     const [mascota, setMascota] = useState("Todas");
@@ -19,7 +23,26 @@ function Tienda() {
     const [orden, setOrden] = useState("Relevancia");
 
     const { agregar, items } = useCarrito();
-    const [stock] = useState(obtenerStock);
+
+    useEffect(() => {
+        let activo = true;
+        listarProductosApi()
+            .then((lista) => {
+                if (activo) setProductos(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setError(err instanceof ApiError ? err.message : "No se pudo cargar el catálogo de productos.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, []);
 
     // Notificación "producto añadido"
     const [anadido, setAnadido] = useState("");
@@ -29,7 +52,6 @@ function Tienda() {
         agregar(id);
         setAnadido(nombre);
 
-        // Si se añade otro producto antes de que se cierre, se reinicia el tiempo
         window.clearTimeout(temporizador.current);
         temporizador.current = window.setTimeout(() => setAnadido(""), 3000);
     };
@@ -43,7 +65,7 @@ function Tienda() {
     };
 
     const texto = busqueda.trim().toLowerCase();
-    const maximo = precioMax.replace(/\D/g, "");   // deja solo los dígitos: "$10.000" → "10000"
+    const maximo = precioMax.replace(/\D/g, "");
 
     const filtrados = productos
         .filter((p) => p.nombre.toLowerCase().includes(texto))
@@ -54,7 +76,6 @@ function Tienda() {
             if (orden === "Menor precio") return a.precio - b.precio;
             if (orden === "Mayor precio") return b.precio - a.precio;
 
-            // Relevancia: con búsqueda, primero donde el texto aparece más al inicio del nombre
             if (texto) {
                 return a.nombre.toLowerCase().indexOf(texto) - b.nombre.toLowerCase().indexOf(texto);
             }
@@ -126,7 +147,11 @@ function Tienda() {
                 </div>
             </div>
 
-            {filtrados.length === 0 ? (
+            {cargando ? (
+                <p className="text-center text-muted py-5">Cargando catálogo de productos...</p>
+            ) : error ? (
+                <p className="text-center text-danger py-5">{error}</p>
+            ) : filtrados.length === 0 ? (
                 <p className="text-center text-muted fst-italic py-5">
                     No se encontraron productos con esos filtros.
                 </p>
@@ -136,7 +161,7 @@ function Tienda() {
                         <div className="col-sm-6 col-lg-3" key={p.id}>
                             <CardProducto
                                 {...p}
-                                stock={stock[p.id] ?? 0}
+                                stock={p.stock}
                                 enCarrito={items.find((i) => i.id === p.id)?.cantidad ?? 0}
                                 alAnadir={() => anadirAlCarrito(p.id, p.nombre)}
                             />
