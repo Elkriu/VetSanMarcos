@@ -1,23 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TarjetaPanel from "../moleculas/TarjetaPanel";
 import TablaInventario from "./TablaInventario";
-import { productos } from "../../datos/productos";
-import { obtenerStock, ingresarStock, STOCK_BAJO } from "../../datos/stock";
+import { listarProductosApi, actualizarStockApi, type Producto } from "../../datos/productos";
+import { STOCK_BAJO } from "../../datos/stock";
+import { ApiError } from "../../utils/api";
 
 function SeccionInventario() {
-    const [stock, setStock] = useState(obtenerStock);
+    const [productos, setProductos] = useState<Producto[]>([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
     const [mensaje, setMensaje] = useState("");
 
-    const alIngresar = (id: number, cantidad: number) => {
-        setStock(ingresarStock(id, cantidad));
+    useEffect(() => {
+        let activo = true;
+        listarProductosApi()
+            .then((lista) => {
+                if (activo) setProductos(lista);
+            })
+            .catch((err) => {
+                if (activo) {
+                    setError(err instanceof ApiError ? err.message : "No se pudo cargar el inventario.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
 
+        return () => {
+            activo = false;
+        };
+    }, []);
+
+    const alIngresar = async (id: number, cantidad: number) => {
         const producto = productos.find((p) => p.id === id);
-        setMensaje(`Se ingresaron ${cantidad} unidad(es) de "${producto?.nombre}".`);
-        setTimeout(() => setMensaje(""), 4000);
+        if (!producto) return;
+
+        try {
+            const actualizado = await actualizarStockApi(id, producto.stock + cantidad);
+            setProductos((prev) => prev.map((p) => (p.id === id ? actualizado : p)));
+            setMensaje(`Se ingresaron ${cantidad} unidad(es) de "${actualizado.nombre}".`);
+            setTimeout(() => setMensaje(""), 4000);
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo actualizar el stock.");
+        }
     };
 
-    const agotados = productos.filter((p) => stock[p.id] === 0).length;
-    const bajos = productos.filter((p) => stock[p.id] > 0 && stock[p.id] <= STOCK_BAJO).length;
+    const agotados = productos.filter((p) => p.stock === 0).length;
+    const bajos = productos.filter((p) => p.stock > 0 && p.stock <= STOCK_BAJO).length;
 
     return (
         <TarjetaPanel
@@ -36,7 +65,13 @@ function SeccionInventario() {
                 </div>
             )}
 
-            <TablaInventario productos={productos} stock={stock} alIngresar={alIngresar} />
+            {cargando ? (
+                <p className="text-center text-muted py-3 mb-0">Cargando inventario...</p>
+            ) : error ? (
+                <p className="text-center text-danger py-3 mb-0">{error}</p>
+            ) : (
+                <TablaInventario productos={productos} alIngresar={alIngresar} />
+            )}
         </TarjetaPanel>
     );
 }

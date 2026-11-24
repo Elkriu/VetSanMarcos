@@ -2,6 +2,7 @@
 export const API_USUARIOS = "http://localhost:8081";
 export const API_CONTACTO = "http://localhost:8082";
 export const API_CITAS = "http://localhost:8083";
+export const API_INVENTARIO = "http://localhost:8084";
 
 const CLAVE_SESION = "sesion_activa";
 

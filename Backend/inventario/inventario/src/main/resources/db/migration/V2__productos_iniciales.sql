@@ -1,0 +1,15 @@
+INSERT INTO producto (id, nombre, categoria, mascota, precio, stock, emoji, imagen, descripcion) VALUES
+(1, 'Alimento Premium Perro Adulto 15 kg', 'Alimento', 'Perro', 42990, 12, '🍖', '/img/productos/alimento-perro.webp', 'Nutrición completa y balanceada para perros adultos.'),
+(2, 'Alimento Gato Esterilizado 3 kg', 'Alimento', 'Gato', 18990, 15, '🐟', '/img/productos/alimento-gato.webp', 'Control de peso y cuidado urinario para gatos esterilizados.'),
+(3, 'Snack Dental para Perros', 'Alimento', 'Perro', 5990, 25, '🦴', '/img/productos/snack-dental.jpg', 'Ayuda a reducir el sarro y refrescar el aliento.'),
+(4, 'Mix de Semillas para Aves 1 kg', 'Alimento', 'Ave', 4490, 18, '🌾', '/img/productos/semillas-aves.jfif', 'Mezcla de semillas seleccionadas para aves de compañía.'),
+(5, 'Heno Premium para Conejos 1 kg', 'Alimento', 'Conejo', 5490, 14, '🌿', '/img/productos/heno-conejos.webp', 'Heno fresco, base de la dieta y del desgaste dental.'),
+(6, 'Pelota de Goma Resistente', 'Juguetes', 'Perro', 3990, 20, '🎾', '/img/productos/pelota.jpg', 'Ideal para juego y entrenamiento diario.'),
+(7, 'Ratón de Peluche con Catnip', 'Juguetes', 'Gato', 2990, 22, '🐭', '/img/productos/raton-peluche.webp', 'Estimula el instinto de caza de tu gato.'),
+(8, 'Shampoo Hipoalergénico 500 ml', 'Higiene', 'Perro', 8990, 10, '🧴', '/img/productos/shampoo.jfif', 'Fórmula suave para pieles sensibles.'),
+(9, 'Arena Sanitaria Aglomerante 10 kg', 'Higiene', 'Gato', 9990, 16, '🪣', '/img/productos/arena-gatos.webp', 'Control de olores y fácil limpieza.'),
+(10, 'Collar Antipulgas', 'Salud', 'Perro', 11990, 15, '🛡️', '/img/productos/collar-antipulgas.jfif', 'Protección contra pulgas y garrapatas por 8 meses.'),
+(11, 'Pipeta Antiparasitaria Gato', 'Salud', 'Gato', 9490, 18, '💧', '/img/productos/pipeta-gato.jpg', 'Antiparasitario externo de aplicación mensual.'),
+(12, 'Correa Retráctil 5 m', 'Accesorios', 'Perro', 12990, 9, '🦮', '/img/productos/correa.jfif', 'Correa con freno de seguridad y mango ergonómico.'),
+(13, 'Rascador Torre 60 cm', 'Accesorios', 'Gato', 24990, 6, '🐈', '/img/productos/rascador.webp', 'Torre con base estable para afilar uñas y descansar.'),
+(14, 'Columpio de Madera para Aves', 'Accesorios', 'Ave', 4990, 12, '🐦', '/img/productos/columpio-aves.webp', 'Entretención y ejercicio dentro de la jaula.');

@@ -1,0 +1,12 @@
+CREATE TABLE producto (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(120) NOT NULL,
+    categoria VARCHAR(40) NOT NULL,
+    mascota VARCHAR(40) NOT NULL,
+    precio INT NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
+    emoji VARCHAR(16) NOT NULL,
+    imagen VARCHAR(255) NOT NULL,
+    descripcion VARCHAR(500) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE
+);
