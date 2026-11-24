@@ -49,7 +49,7 @@ public class VentaService {
             total += prod.getPrecio() * item.getCantidad();
         }
 
-        // Descuenta el stock en ms_inventario antes de persistir la boleta
+
         inventarioClient.descontarStock(req.getItems(), user.getToken());
 
         int neto = (int) Math.round(total / 1.19);
