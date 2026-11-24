@@ -15,8 +15,11 @@ import { servicios } from "../datos/servicios";
 import { mascotas } from "../datos/productos";
 import { ApiError } from "../utils/api";
 import {
-    obtenerCitas,
-    guardarCitas,
+    listarCitasApi,
+    agendarCitaApi,
+    reprogramarCitaApi,
+    cancelarCitaApi,
+    obtenerDisponibilidadApi,
     hoyStr,
     horaYaPaso,
     opcionesHoras,
@@ -29,15 +32,23 @@ interface SelectorHoraProps {
     idHora: string;
     fecha: string;
     hora: string;
-    citas: Cita[];
+    horasOcupadas: string[];
+    cargandoHoras?: boolean;
     clase: string;
-    ignorarId?: string;
     alCambiarFecha: (fecha: string) => void;
     alCambiarHora: (hora: string) => void;
 }
 
 function SelectorFechaHora({
-    idFecha, idHora, fecha, hora, citas, clase, ignorarId, alCambiarFecha, alCambiarHora,
+    idFecha,
+    idHora,
+    fecha,
+    hora,
+    horasOcupadas,
+    cargandoHoras,
+    clase,
+    alCambiarFecha,
+    alCambiarHora,
 }: SelectorHoraProps) {
     return (
         <>
@@ -60,17 +71,22 @@ function SelectorFechaHora({
                     className="form-select"
                     value={hora}
                     onChange={(e) => alCambiarHora(e.target.value)}
-                    disabled={!fecha}
+                    disabled={!fecha || cargandoHoras}
                     required
                 >
                     <option value="" disabled>
-                        {fecha ? "-- Seleccione una hora --" : "-- Primero seleccione una fecha --"}
+                        {!fecha
+                            ? "-- Primero seleccione una fecha --"
+                            : cargandoHoras
+                            ? "Cargando horas..."
+                            : "-- Seleccione una hora --"}
                     </option>
-                    {opcionesHoras(fecha, citas, ignorarId).map((op) => (
-                        <option key={op.hora} value={op.hora} disabled={op.disabled}>
-                            {op.texto}
-                        </option>
-                    ))}
+                    {!cargandoHoras &&
+                        opcionesHoras(fecha, horasOcupadas).map((op) => (
+                            <option key={op.hora} value={op.hora} disabled={op.disabled}>
+                                {op.texto}
+                            </option>
+                        ))}
                 </select>
             </div>
         </>
@@ -97,7 +113,9 @@ function Recepcion() {
     const [cargandoMensajes, setCargandoMensajes] = useState(true);
     const [errorMensajes, setErrorMensajes] = useState("");
 
-    const [citas, setCitas] = useState(obtenerCitas);
+    const [citas, setCitas] = useState<Cita[]>([]);
+    const [cargandoCitas, setCargandoCitas] = useState(true);
+    const [errorCitas, setErrorCitas] = useState("");
 
     useEffect(() => {
         let activo = true;
@@ -132,6 +150,21 @@ function Recepcion() {
                 if (activo) setCargandoMensajes(false);
             });
 
+        listarCitasApi()
+            .then((lista) => {
+                if (activo) setCitas(ordenarPorFecha(lista));
+            })
+            .catch((err) => {
+                if (activo) {
+                    setErrorCitas(
+                        err instanceof ApiError ? err.message : "No se pudieron cargar las citas médicas."
+                    );
+                }
+            })
+            .finally(() => {
+                if (activo) setCargandoCitas(false);
+            });
+
         return () => {
             activo = false;
         };
@@ -156,19 +189,38 @@ function Recepcion() {
         }
     };
 
-    const actualizarCitas = (nuevas: Cita[]) => {
-        guardarCitas(nuevas);
-        setCitas(nuevas);
-    };
-
     // ----- Agendamiento manual -----
     const [nombre, setNombre] = useState("");
     const [servicio, setServicio] = useState("");
     const [mascota, setMascota] = useState("");
     const [fecha, setFecha] = useState("");
     const [hora, setHora] = useState("");
+    const [ocupadasManual, setOcupadasManual] = useState<string[]>([]);
+    const [cargandoManual, setCargandoManual] = useState(false);
 
-    const agendarManual = (e: SubmitEvent<HTMLFormElement>) => {
+    useEffect(() => {
+        if (!fecha) {
+            setOcupadasManual([]);
+            return;
+        }
+        let activo = true;
+        setCargandoManual(true);
+        obtenerDisponibilidadApi(fecha)
+            .then((horas) => {
+                if (activo) setOcupadasManual(horas);
+            })
+            .catch(() => {
+                if (activo) setOcupadasManual([]);
+            })
+            .finally(() => {
+                if (activo) setCargandoManual(false);
+            });
+        return () => {
+            activo = false;
+        };
+    }, [fecha]);
+
+    const agendarManual = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!nombre.trim() || !servicio || !mascota || !fecha || !hora) return;
 
@@ -176,36 +228,63 @@ function Recepcion() {
             alert("⚠️ No puedes programar una cita en una fecha u hora pasada.");
             return;
         }
-        if (citas.some((c) => c.fecha === fecha && c.hora === hora)) {
-            alert("⚠️ Error: Ya existe una cita agendada en ese mismo día y horario.");
-            return;
-        }
 
-        actualizarCitas([
-            ...citas,
-            {
-                id: crypto.randomUUID(),
+        try {
+            const creada = await agendarCitaApi({
                 nombreCliente: nombre.trim(),
+                emailCliente: "Agendamiento Manual (Recepción)",
                 servicio,
                 tipoMascota: mascota,
                 fecha,
                 hora,
-                emailCliente: "Agendamiento Manual (Recepción)",
-            },
-        ]);
+            });
 
-        alert(`¡Cita registrada con éxito para ${nombre.trim()}!`);
-        setNombre("");
-        setServicio("");
-        setMascota("");
-        setFecha("");
-        setHora("");
+            setCitas((prev) => ordenarPorFecha([...prev, creada]));
+            alert(`¡Cita registrada con éxito para ${nombre.trim()}!`);
+            setNombre("");
+            setServicio("");
+            setMascota("");
+            setFecha("");
+            setHora("");
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo registrar la cita.");
+        }
     };
 
     // ----- Modificar cita -----
     const [citaEditada, setCitaEditada] = useState<Cita | null>(null);
     const [nuevaFecha, setNuevaFecha] = useState("");
     const [nuevaHora, setNuevaHora] = useState("");
+    const [ocupadasModal, setOcupadasModal] = useState<string[]>([]);
+    const [cargandoModal, setCargandoModal] = useState(false);
+
+    useEffect(() => {
+        if (!citaEditada || !nuevaFecha) {
+            setOcupadasModal([]);
+            return;
+        }
+        let activo = true;
+        setCargandoModal(true);
+        obtenerDisponibilidadApi(nuevaFecha)
+            .then((horas) => {
+                if (!activo) return;
+                // Si mantiene la misma fecha, su propia hora actual no se bloquea
+                const filtradas =
+                    nuevaFecha === citaEditada.fecha
+                        ? horas.filter((h) => h !== citaEditada.hora)
+                        : horas;
+                setOcupadasModal(filtradas);
+            })
+            .catch(() => {
+                if (activo) setOcupadasModal([]);
+            })
+            .finally(() => {
+                if (activo) setCargandoModal(false);
+            });
+        return () => {
+            activo = false;
+        };
+    }, [citaEditada, nuevaFecha]);
 
     const abrirModificar = (c: Cita) => {
         setCitaEditada(c);
@@ -213,7 +292,7 @@ function Recepcion() {
         setNuevaHora(c.hora);
     };
 
-    const guardarModificacion = (e: SubmitEvent<HTMLFormElement>) => {
+    const guardarModificacion = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!citaEditada) return;
 
@@ -221,21 +300,30 @@ function Recepcion() {
             alert("⚠️ No puedes programar una cita en una fecha u hora pasada.");
             return;
         }
-        if (citas.some((c) => c.id !== citaEditada.id && c.fecha === nuevaFecha && c.hora === nuevaHora)) {
-            alert("⚠️ Error: Ya existe otra cita agendada en ese mismo día y horario.");
-            return;
-        }
 
-        actualizarCitas(
-            citas.map((c) => (c.id === citaEditada.id ? { ...c, fecha: nuevaFecha, hora: nuevaHora } : c))
-        );
-        setCitaEditada(null);
-        alert("¡Cita modificada con éxito desde Recepción!");
+        try {
+            const actualizada = await reprogramarCitaApi(citaEditada.id, {
+                fecha: nuevaFecha,
+                hora: nuevaHora,
+            });
+            setCitas((prev) =>
+                ordenarPorFecha(prev.map((c) => (c.id === actualizada.id ? actualizada : c)))
+            );
+            setCitaEditada(null);
+            alert("¡Cita modificada con éxito desde Recepción!");
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo reprogramar la cita.");
+        }
     };
 
-    const cancelarCita = (id: string) => {
+    const cancelarCita = async (id: number) => {
         if (!confirm("¿Estás seguro de cancelar esta cita médica?")) return;
-        actualizarCitas(citas.filter((c) => c.id !== id));
+        try {
+            await cancelarCitaApi(id);
+            setCitas((prev) => prev.filter((c) => c.id !== id));
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo cancelar la cita.");
+        }
     };
 
     return (
@@ -303,7 +391,8 @@ function Recepcion() {
                             idHora="manual-hora"
                             fecha={fecha}
                             hora={hora}
-                            citas={citas}
+                            horasOcupadas={ocupadasManual}
+                            cargandoHoras={cargandoManual}
                             clase="col-lg-2"
                             alCambiarFecha={(f) => { setFecha(f); setHora(""); }}
                             alCambiarHora={setHora}
@@ -334,14 +423,26 @@ function Recepcion() {
                             </tr>
                         </thead>
                         <tbody>
-                            {citas.length === 0 ? (
+                            {cargandoCitas ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-muted py-3">
+                                        Cargando citas médicas...
+                                    </td>
+                                </tr>
+                            ) : errorCitas ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-danger py-3">
+                                        {errorCitas}
+                                    </td>
+                                </tr>
+                            ) : citas.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="text-center text-muted py-3">
                                         No hay citas agendadas actualmente.
                                     </td>
                                 </tr>
                             ) : (
-                                ordenarPorFecha(citas).map((c) => (
+                                citas.map((c) => (
                                     <tr key={c.id}>
                                         <td><span className="fw-semibold text-primary">{c.servicio}</span></td>
                                         <td><span className="badge bg-info text-dark">{c.tipoMascota || "No especificada"}</span></td>
@@ -519,9 +620,9 @@ function Recepcion() {
                             idHora="mod-hora"
                             fecha={nuevaFecha}
                             hora={nuevaHora}
-                            citas={citas}
+                            horasOcupadas={ocupadasModal}
+                            cargandoHoras={cargandoModal}
                             clase="mb-3"
-                            ignorarId={citaEditada.id}
                             alCambiarFecha={(f) => { setNuevaFecha(f); setNuevaHora(""); }}
                             alCambiarHora={setNuevaHora}
                         />

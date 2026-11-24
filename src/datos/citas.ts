@@ -1,11 +1,28 @@
+import { API_CITAS, peticion } from "../utils/api";
+
 export interface Cita {
-    id: string;
+    id: number;
+    usuarioId?: number | null;
+    nombreCliente: string;
+    emailCliente: string;
     servicio: string;
     tipoMascota: string;
-    fecha: string;          // "YYYY-MM-DD"
-    hora: string;           // "HH:MM"
-    emailCliente: string;
-    nombreCliente?: string; // solo las citas agendadas manualmente desde recepción
+    fecha: string; 
+    hora: string;  
+}
+
+export interface CrearCitaRequest {
+    servicio: string;
+    tipoMascota: string;
+    fecha: string;
+    hora: string;
+    nombreCliente?: string;
+    emailCliente?: string;
+}
+
+export interface ReprogramarCitaRequest {
+    fecha: string;
+    hora: string;
 }
 
 export interface OpcionHora {
@@ -14,38 +31,38 @@ export interface OpcionHora {
     disabled: boolean;
 }
 
-const CLAVE = "citas_vet";
-
 export const HORARIOS_FIJOS = ["10:00", "11:30", "15:00", "17:15"];
 
-// Las citas que guarda Agenda.tsx no traen id. Aquí se les asigna uno la primera vez
-// que se leen, así las vistas no dependen de la posición en el arreglo.
-export function obtenerCitas(): Cita[] {
-    let guardadas: Partial<Cita>[] = [];
-    try {
-        guardadas = JSON.parse(localStorage.getItem(CLAVE) ?? "[]");
-    } catch {
-        guardadas = [];
-    }
+export function obtenerDisponibilidadApi(fecha: string): Promise<string[]> {
+    return peticion<string[]>(
+        `${API_CITAS}/citas/disponibilidad?fecha=${encodeURIComponent(fecha)}`,
+        {},
+        false, 
+    );
+}
 
-    let huboCambios = false;
-    const citas = guardadas.map((c) => {
-        if (c.id) return c as Cita;
-        huboCambios = true;
-        return { ...c, id: crypto.randomUUID() } as Cita;
+export function listarCitasApi(): Promise<Cita[]> {
+    return peticion<Cita[]>(`${API_CITAS}/citas`);
+}
+
+export function agendarCitaApi(datos: CrearCitaRequest): Promise<Cita> {
+    return peticion<Cita>(`${API_CITAS}/citas`, {
+        method: "POST",
+        body: JSON.stringify(datos),
     });
-
-    if (huboCambios) guardarCitas(citas);
-    return citas;
 }
 
-export function guardarCitas(citas: Cita[]) {
-    localStorage.setItem(CLAVE, JSON.stringify(citas));
+export function reprogramarCitaApi(id: number, datos: ReprogramarCitaRequest): Promise<Cita> {
+    return peticion<Cita>(`${API_CITAS}/citas/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(datos),
+    });
 }
 
-// Correo del dueño de la cita (las más antiguas podían usar "email")
-export function correoDeCita(c: Cita): string {
-    return c.emailCliente || (c as Cita & { email?: string }).email || "";
+export function cancelarCitaApi(id: number): Promise<void> {
+    return peticion<void>(`${API_CITAS}/citas/${id}`, {
+        method: "DELETE",
+    });
 }
 
 export function hoyStr(): string {
@@ -63,14 +80,8 @@ export function horaYaPaso(fecha: string, hora: string): boolean {
     return h < ahora.getHours() || (h === ahora.getHours() && m <= ahora.getMinutes());
 }
 
-// Opciones del select de horas con su estado (Disponible / Pasada / Ocupada).
-// `ignorarId` sirve al modificar una cita: su propio horario no cuenta como ocupado.
-export function opcionesHoras(fecha: string, citas: Cita[], ignorarId?: string): OpcionHora[] {
+export function opcionesHoras(fecha: string, horasOcupadas: string[]): OpcionHora[] {
     if (!fecha) return [];
-
-    const ocupadas = citas
-        .filter((c) => c.fecha === fecha && c.id !== ignorarId)
-        .map((c) => c.hora);
 
     return HORARIOS_FIJOS.map((hora) => {
         let disabled = false;
@@ -80,7 +91,7 @@ export function opcionesHoras(fecha: string, citas: Cita[], ignorarId?: string):
             disabled = true;
             extra = " (Pasada)";
         }
-        if (ocupadas.includes(hora)) {
+        if (horasOcupadas.includes(hora)) {
             disabled = true;
             extra = " (Ocupada)";
         }

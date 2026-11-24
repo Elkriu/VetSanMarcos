@@ -1,37 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LayoutPanel from "../componentes/organismos/LayoutPanel";
 import EncabezadoPanel from "../componentes/moleculas/EncabezadoPanel";
 import TarjetaPanel from "../componentes/moleculas/TarjetaPanel";
 import BotonEnlace from "../componentes/atomos/BotonEnlace";
 import { useAuth } from "../contexto/useAuth";
-import { obtenerCitas, guardarCitas, correoDeCita, ordenarPorFecha } from "../datos/citas";
+import { listarCitasApi, cancelarCitaApi, ordenarPorFecha, type Cita } from "../datos/citas";
 import { buscarBoletasDeCliente } from "../datos/boletas";
 import { formatoPeso } from "../utils/formato";
+import { ApiError } from "../utils/api";
 
 function MisCitas() {
     const { sesion } = useAuth();
-    const [citas, setCitas] = useState(obtenerCitas);
+    const [citas, setCitas] = useState<Cita[]>([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
 
     const correo = sesion?.email.toLowerCase() ?? "";
-    const misCitas = ordenarPorFecha(citas.filter((c) => correoDeCita(c).toLowerCase() === correo));
     const misCompras = buscarBoletasDeCliente(correo);
 
-    const cancelar = (id: string) => {
+    useEffect(() => {
+        let activo = true;
+        listarCitasApi()
+            .then((lista) => {
+                if (activo) setCitas(ordenarPorFecha(lista));
+            })
+            .catch((err) => {
+                if (activo) {
+                    setError(err instanceof ApiError ? err.message : "No se pudieron cargar tus citas.");
+                }
+            })
+            .finally(() => {
+                if (activo) setCargando(false);
+            });
+
+        return () => {
+            activo = false;
+        };
+    }, []);
+
+    const cancelar = async (id: number) => {
         if (!confirm("¿Estás seguro de cancelar esta cita médica?")) return;
 
-        const restantes = citas.filter((c) => c.id !== id);
-        guardarCitas(restantes);
-        setCitas(restantes);
+        try {
+            await cancelarCitaApi(id);
+            setCitas((prev) => prev.filter((c) => c.id !== id));
+        } catch (err) {
+            alert(err instanceof ApiError ? err.message : "No se pudo cancelar la cita.");
+        }
     };
 
     return (
         <LayoutPanel tipo="cliente">
             <EncabezadoPanel
                 titulo="Mi Cuenta y Actividad"
-                descripcion="Aquí puedes revisar el historial y estado exclusivo de las reservas asociadas a tu cuenta personal."
+                descripcion="Revisa el estado de tus citas médicas agendadas y el historial de tus boletas en un solo lugar."
             />
 
-            <TarjetaPanel borde="success">
+            <TarjetaPanel
+                borde="success"
+                titulo="🩺 Citas Médicas Agendadas"
+            >
                 <div className="table-responsive">
                     <table className="table align-middle mb-0">
                         <thead className="table-light">
@@ -44,14 +72,26 @@ function MisCitas() {
                             </tr>
                         </thead>
                         <tbody>
-                            {misCitas.length === 0 ? (
+                            {cargando ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-muted py-4">
+                                        Cargando tus citas...
+                                    </td>
+                                </tr>
+                            ) : error ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center text-danger py-4">
+                                        {error}
+                                    </td>
+                                </tr>
+                            ) : citas.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="text-center text-muted py-4">
                                         No tienes citas médicas agendadas en este momento.
                                     </td>
                                 </tr>
                             ) : (
-                                misCitas.map((c) => (
+                                citas.map((c) => (
                                     <tr key={c.id}>
                                         <td><span className="fw-semibold text-primary">{c.servicio}</span></td>
                                         <td><span className="badge bg-info text-dark">{c.tipoMascota || "No especificada"}</span></td>

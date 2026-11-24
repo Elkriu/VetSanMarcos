@@ -1,6 +1,7 @@
 // Dirección de cada microservicio (cada uno tiene su propio puerto)
 export const API_USUARIOS = "http://localhost:8081";
 export const API_CONTACTO = "http://localhost:8082";
+export const API_CITAS = "http://localhost:8083";
 
 const CLAVE_SESION = "sesion_activa";
 
