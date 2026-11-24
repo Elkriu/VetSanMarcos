@@ -1,0 +1,9 @@
+CREATE TABLE transaccion (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    cliente_email VARCHAR(120) NOT NULL,
+    monto INT NOT NULL,
+    tarjeta VARCHAR(4) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    motivo VARCHAR(200) NOT NULL
+);

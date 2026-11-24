@@ -4,6 +4,7 @@ export const API_CONTACTO = "http://localhost:8082";
 export const API_CITAS = "http://localhost:8083";
 export const API_INVENTARIO = "http://localhost:8084";
 export const API_VENTAS = "http://localhost:8085";
+export const API_PAGOS = "http://localhost:8086";
 
 const CLAVE_SESION = "sesion_activa";
 

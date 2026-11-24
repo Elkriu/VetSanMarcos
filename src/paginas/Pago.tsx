@@ -8,7 +8,7 @@ import { useCarrito } from "../contexto/useCarrito";
 import { listarProductosApi, type Producto } from "../datos/productos";
 import { registrarBoletaApi } from "../datos/boletas";
 import { formatoPeso, desglosarIva } from "../utils/formato";
-import { ApiError } from "../utils/api";
+import { ApiError, API_PAGOS, peticion } from "../utils/api";
 
 function Pago() {
     const { sesion } = useAuth();
@@ -66,6 +66,14 @@ function Pago() {
 
     const alExito = async (ultimosDigitos: string) => {
         try {
+            await peticion(`${API_PAGOS}/pagos`, {
+                method: "POST",
+                body: JSON.stringify({
+                    monto: total,
+                    tarjeta: ultimosDigitos,
+                }),
+            });
+
             const boleta = await registrarBoletaApi({
                 tarjeta: ultimosDigitos,
                 items: lineas.map((l) => ({
